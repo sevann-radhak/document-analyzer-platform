@@ -1,0 +1,244 @@
+---
+alwaysApply: true
+---
+
+# Cursor Rules for Technical Challenge - Full Stack Developer with AI
+
+## Project Context
+This is a technical challenge for a Senior Full Stack Developer position with AI integration. The project evaluates:
+- Python development skills (FastAPI/Flask)
+- REST API development
+- AI tool integration (AWS Textract, Azure Cognitive Services, OpenAI)
+- AWS S3 integration
+- SQL Server database with SQLAlchemy ORM
+- JWT authentication and role-based access control
+- Clean architecture and modular design
+- Unit testing with Pytest/Unittest
+- Version control with GitHub
+
+## Architecture Principles
+
+### Clean Architecture
+- Separate concerns into layers: handlers/controllers, services/use cases, repositories/data access, domain models
+- Use dependency injection with interfaces, not concrete types
+- Keep business logic independent of frameworks
+- Follow domain-driven design principles where applicable
+
+### Project Structure
+```
+project/
+├── app/
+│   ├── api/
+│   │   ├── v1/
+│   │   │   ├── endpoints/
+│   │   │   │   ├── auth.py
+│   │   │   │   ├── files.py
+│   │   │   │   └── tokens.py
+│   │   │   └── router.py
+│   ├── core/
+│   │   ├── config.py
+│   │   ├── security.py
+│   │   └── dependencies.py
+│   ├── services/
+│   │   ├── auth_service.py
+│   │   ├── file_service.py
+│   │   ├── ai_service.py
+│   │   └── event_service.py
+│   ├── repositories/
+│   │   ├── user_repository.py
+│   │   ├── file_repository.py
+│   │   └── event_repository.py
+│   ├── models/
+│   │   ├── user.py
+│   │   ├── file.py
+│   │   └── event.py
+│   ├── schemas/
+│   │   ├── auth.py
+│   │   ├── file.py
+│   │   └── event.py
+│   ├── utils/
+│   │   ├── validators.py
+│   │   └── aws_client.py
+│   └── main.py
+├── tests/
+│   ├── unit/
+│   ├── integration/
+│   └── conftest.py
+├── frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   ├── pages/
+│   │   └── services/
+│   └── public/
+├── requirements.txt
+├── .env.example
+└── README.md
+```
+
+## Code Standards
+
+### Python Style
+- Follow PEP 8 conventions
+- Use type hints for all function parameters and return types
+- Maximum line length: 100 characters
+- Use descriptive variable and function names in English
+- Write short, focused functions with single responsibility
+- Prefer composition over inheritance
+
+### API Development
+- Use FastAPI (preferred) or Flask
+- Implement proper error handling with custom exceptions
+- Use Pydantic models for request/response validation
+- Return appropriate HTTP status codes
+- Implement rate limiting and input validation
+- Use async/await for I/O operations
+
+### Security
+- Validate and sanitize all inputs, especially from external sources
+- Use secure defaults for JWT (15-minute expiration as specified)
+- Implement role-based access control (RBAC)
+- Protect sensitive endpoints with proper authentication
+- Use environment variables for secrets (never hardcode)
+
+### Database
+- Use SQLAlchemy ORM
+- Create migrations for schema changes
+- Use connection pooling
+- Implement proper transaction management
+- Add indexes for frequently queried fields
+
+### Testing
+- Write at least 10 unit test cases per method using Pytest
+- Use table-driven test patterns
+- Mock external dependencies (AWS, AI services, database)
+- Achieve high test coverage (>80%)
+- Separate unit tests from integration tests
+- Use fixtures for common test setup
+
+### AI Integration
+- Use AWS Textract, Azure Cognitive Services, or OpenAI for document analysis
+- Implement proper error handling for AI service calls
+- Add retry logic with exponential backoff
+- Cache AI responses when appropriate
+- Log all AI interactions for debugging
+
+### AWS S3
+- Use boto3 for S3 operations
+- Implement proper error handling
+- Use presigned URLs for secure file access
+- Validate file types and sizes before upload
+- Store metadata in database
+
+## Git Workflow
+
+### Commit Strategy
+- Make small, granular commits (not large monolithic commits)
+- Each commit should represent a single logical change
+- Before refactoring with AI, commit the original code
+- Refactoring commits must include: "Refactorización con [AI Name]" or "Refactoring with [AI Name]"
+- Write clear, descriptive commit messages in English
+- Document AI-assisted changes in commit messages
+
+### Commit Message Format
+```
+type(scope): brief description
+
+Detailed explanation if needed
+- What changed
+- Why it changed
+- AI tool used (if applicable)
+```
+
+Types: feat, fix, refactor, test, docs, chore
+
+## Documentation
+
+### Code Documentation
+- Add clear descriptions for each function:
+  - What the function does
+  - Parameters and their types
+  - Return value and type
+- Use docstrings following Google or NumPy style
+- Document complex algorithms and business logic
+- Keep documentation minimal but clear (code should be self-explanatory)
+
+### API Documentation
+- Use FastAPI's automatic OpenAPI/Swagger documentation
+- Add descriptions to all endpoints
+- Document request/response schemas
+- Include example requests and responses
+
+## Development Workflow
+
+### Before Starting
+1. Review requirements thoroughly
+2. Plan architecture and data models
+3. Set up development environment
+4. Configure environment variables
+5. Initialize database schema
+
+### During Development
+1. Write tests before or alongside code (TDD approach)
+2. Make frequent, small commits
+3. Use AI for:
+   - Code generation
+   - Refactoring (always commit original first)
+   - Test generation
+   - Documentation
+   - Error resolution
+   - Architecture suggestions
+4. Test each feature before moving to the next
+5. Keep code modular and maintainable
+
+### Code Review Checklist
+- [ ] Code follows architecture principles
+- [ ] All functions have type hints
+- [ ] Error handling is implemented
+- [ ] Unit tests are written and passing
+- [ ] No hardcoded secrets or credentials
+- [ ] API endpoints are documented
+- [ ] Code is properly formatted
+- [ ] Git commits are clear and descriptive
+
+## Specific Requirements
+
+### Part 1: APIs
+1. **Login API**: Anonymous login, return JWT with id_usuario, rol, 15-min expiration
+2. **File Upload API**: Upload CSV, store in S3, save to SQL Server, return validations, role-based access
+3. **Token Renewal API**: Renew JWT if not expired, extend expiration time
+
+### Part 2: Web Modules
+1. **Document Analysis Module**: Upload PDF/JPG/PNG, classify (Invoice/Information), extract data using AI
+2. **Historical Module**: Event log with filters (type, description, date range), Excel export
+
+### Part 3: AI and Refactoring
+1. Use AI tools for code optimization
+2. Commit original code before each refactoring
+3. Generate documentation with AI
+4. Create comprehensive unit tests
+
+## Performance Considerations
+- Use async operations for I/O-bound tasks
+- Implement caching where appropriate
+- Optimize database queries
+- Use connection pooling
+- Monitor and log performance metrics
+
+## Error Handling
+- Use custom exception classes
+- Return appropriate HTTP status codes
+- Log errors with context
+- Provide meaningful error messages to clients
+- Never expose internal errors to end users
+
+## Environment Variables
+Required environment variables:
+- DATABASE_URL
+- AWS_ACCESS_KEY_ID
+- AWS_SECRET_ACCESS_KEY
+- AWS_S3_BUCKET_NAME
+- JWT_SECRET_KEY
+- JWT_ALGORITHM
+- AI_SERVICE_API_KEY (OpenAI/Azure)
+- AI_SERVICE_ENDPOINT (if using Azure)
+

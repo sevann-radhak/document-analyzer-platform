@@ -1,0 +1,56 @@
+---
+alwaysApply: true
+---
+
+## Challenge Requirements
+
+### Part 1: REST APIs
+
+1. **Login API**:
+   - Endpoint for anonymous users (no credentials required)
+   - Return signed JWT with: id_usuario, rol, 15-minute expiration
+   - POST /api/v1/auth/login
+
+2. **File Upload and Validation API**:
+   - Upload CSV file with two additional parameters
+   - Store file in AWS S3 bucket
+   - Save content to SQL Server database
+   - Return validation results: empty values, incorrect types, duplicates
+   - Role-based access control (validate JWT)
+   - POST /api/v1/files/upload
+
+3. **Token Renewal API**:
+   - Renew JWT if not expired
+   - Generate new token with additional expiration time
+   - POST /api/v1/auth/refresh
+
+### Part 2: Web Modules
+
+1. **Document Analysis Module**:
+   - Upload PDF, JPG, or PNG documents
+   - Automatic classification: "Invoice" (economic/financial data) or "Information" (general text)
+   - Data extraction:
+     - If Invoice: client (name, address), provider (name, address), invoice number, date, products (quantity, name, unit price, total), invoice total
+     - If Information: description, content summary, sentiment analysis (positive, negative, neutral)
+   - Use AI tools: AWS Textract, Azure Cognitive Services, or OpenAI
+
+2. **Historical Module (Event Log)**:
+   - Display event log with: event ID, type (Document upload, AI, User interaction), description, date/time
+   - Filters: by type, description, date range
+   - Export to Excel
+
+### Part 3: AI and Refactoring
+
+- Use AI tools (ChatGPT, Copilot, Claude) for code optimization
+- Before each refactoring: commit original code
+- Refactoring commits must include: "Refactoring with [AI Name]"
+- Generate documentation with AI for each function (what it does, parameters, return type)
+- Create minimum 10 unit test cases per method using Pytest
+
+### Mandatory Technologies
+- Python (FastAPI or Flask)
+- AWS S3 for storage
+- SQL Server database (SQLAlchemy ORM)
+- JWT for authentication and role control
+- GitHub for version control
+- AI tools for: data extraction, code refactoring, unit test generation
