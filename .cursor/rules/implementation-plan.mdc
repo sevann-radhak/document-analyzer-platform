@@ -232,9 +232,9 @@ This document outlines the step-by-step implementation plan following Clean Arch
 - **Commit**: `feat(utils): add Excel export functionality - Generated with Cursor` ✅
 
 ### Step 6.6: Excel Export Endpoint
-- [ ] Add GET /api/v1/events/export endpoint
-- [ ] Return Excel file with filtered events
-- **Commit**: `feat(api): add Excel export endpoint for events - Generated with Cursor`
+- [x] Add GET /api/v1/events/export endpoint
+- [x] Return Excel file with filtered events
+- **Commit**: `feat(api): add Excel export endpoint for events - Generated with Cursor` ✅
 
 ### Step 6.7: Unit Tests - Event Service
 - [ ] Create unit tests for event service (10+ test cases)
