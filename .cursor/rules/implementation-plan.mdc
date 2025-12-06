@@ -7,14 +7,16 @@ alwaysApply: true
 ## Overview
 This document outlines the step-by-step implementation plan following Clean Architecture principles. Each phase should be completed with small, granular commits.
 
+**IMPORTANT**: After completing each step and making the commit, update this file by marking the completed items with `[x]` instead of `[ ]` and adding ✅ to the commit line.
+
 ## Phase 1: Database Setup & Models (Foundation)
 **Goal**: Set up database connection and create domain models
 
 ### Step 1.1: Database Configuration
-- [ ] Create database connection utility (`app/utils/database.py`)
-- [ ] Configure SQLAlchemy engine and session
-- [ ] Add database dependency injection
-- **Commit**: `feat(database): add database connection and session management - Generated with Cursor`
+- [x] Create database connection utility (`app/utils/database.py`)
+- [x] Configure SQLAlchemy engine and session
+- [x] Add database dependency injection
+- **Commit**: `feat(database): add database connection and session management - Generated with Cursor` ✅
 
 ### Step 1.2: Base Model
 - [ ] Create base model class with common fields (id, created_at, updated_at)
@@ -332,6 +334,7 @@ This document outlines the step-by-step implementation plan following Clean Arch
 - Refactoring commits must include: "Refactoring with [AI Name]"
 - Keep commits small and focused
 - Test before committing
+- **After each commit**: Update this plan file by marking completed items with `[x]` and adding ✅ to the commit line
 
 ## Testing Requirements
 - Minimum 10 unit test cases per method
