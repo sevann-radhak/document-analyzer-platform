@@ -1,4 +1,5 @@
 """Shared fixtures for integration tests."""
+import warnings
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
@@ -10,6 +11,11 @@ from app.main import app
 from app.utils.database import Base, get_db
 from app.models.user import User
 from app.core.constants import UserRoles
+
+# Suppress openpyxl deprecation warnings
+# These warnings come from openpyxl library using deprecated datetime.utcnow()
+warnings.filterwarnings("ignore", message=".*datetime.datetime.utcnow.*", category=DeprecationWarning)
+warnings.filterwarnings("ignore", category=DeprecationWarning, module="openpyxl")
 
 
 @pytest.fixture(scope="function")

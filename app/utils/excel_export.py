@@ -1,6 +1,13 @@
 """Excel export utility for exporting events to Excel format."""
+import warnings
 import io
 from typing import List
+
+# Suppress openpyxl deprecation warnings before importing
+# These warnings come from openpyxl library using deprecated datetime.utcnow()
+warnings.filterwarnings("ignore", message=".*datetime.datetime.utcnow.*", category=DeprecationWarning)
+warnings.filterwarnings("ignore", category=DeprecationWarning, module="openpyxl")
+
 from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 
@@ -25,11 +32,11 @@ def export_events_to_excel(events: List[Event]) -> io.BytesIO:
         ValueError: If events list is empty or invalid
         Exception: If Excel generation fails
     """
-    if not events:
-        raise ValueError("Events list cannot be empty")
-    
     if not isinstance(events, list):
         raise ValueError("Events must be a list")
+    
+    if not events:
+        raise ValueError("Events list cannot be empty")
     
     workbook = Workbook()
     worksheet = workbook.active

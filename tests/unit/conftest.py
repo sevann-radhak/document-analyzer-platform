@@ -1,9 +1,17 @@
 """Shared fixtures for unit tests."""
+import warnings
 import pytest
 from unittest.mock import Mock, patch
 from sqlalchemy.orm import Session
 from app.models.user import User
 from app.core.constants import UserRoles
+
+# Suppress openpyxl deprecation warnings
+# These warnings come from openpyxl library using deprecated datetime.utcnow()
+# Configure warnings before any imports that might trigger them
+warnings.filterwarnings("ignore", message=".*datetime.datetime.utcnow.*", category=DeprecationWarning)
+warnings.filterwarnings("ignore", category=DeprecationWarning, module="openpyxl.packaging.core")
+warnings.filterwarnings("ignore", category=DeprecationWarning, module="openpyxl.writer.excel")
 
 
 @pytest.fixture

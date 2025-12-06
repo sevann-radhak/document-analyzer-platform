@@ -96,7 +96,7 @@ class S3Client:
                 operation_name='UploadFile'
             ) from e
         except BotoCoreError as e:
-            raise BotoCoreError(ErrorMessages.S3_UPLOAD_ERROR.format(error=str(e))) from e
+            raise ValueError(ErrorMessages.S3_UPLOAD_ERROR.format(error=str(e))) from e
     
     def download_file(self, s3_key: str, file_obj: BinaryIO) -> None:
         """
@@ -131,7 +131,7 @@ class S3Client:
                 operation_name='DownloadFile'
             ) from e
         except BotoCoreError as e:
-            raise BotoCoreError(ErrorMessages.S3_DOWNLOAD_ERROR.format(error=str(e))) from e
+            raise ValueError(ErrorMessages.S3_DOWNLOAD_ERROR.format(error=str(e))) from e
     
     def delete_file(self, s3_key: str) -> None:
         """

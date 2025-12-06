@@ -50,6 +50,49 @@ class TestCreateAnonymousUser:
             assert isinstance(result, User)
             assert result.id == 1
             assert result.rol == UserRoles.USER
+    
+    def test_create_anonymous_user_handles_db_commit_error(self, mock_db, sample_user):
+        """Test that function handles database commit errors."""
+        with patch('app.services.auth_service.User', return_value=sample_user):
+            mock_db.commit.side_effect = Exception("Database error")
+            
+            with pytest.raises(Exception):
+                create_anonymous_user(mock_db)
+    
+    def test_create_anonymous_user_handles_db_add_error(self, mock_db, sample_user):
+        """Test that function handles database add errors."""
+        with patch('app.services.auth_service.User', return_value=sample_user):
+            mock_db.add.side_effect = Exception("Database error")
+            
+            with pytest.raises(Exception):
+                create_anonymous_user(mock_db)
+    
+    def test_create_anonymous_user_handles_db_refresh_error(self, mock_db, sample_user):
+        """Test that function handles database refresh errors."""
+        with patch('app.services.auth_service.User', return_value=sample_user):
+            mock_db.refresh.side_effect = Exception("Database error")
+            
+            with pytest.raises(Exception):
+                create_anonymous_user(mock_db)
+    
+    def test_create_anonymous_user_logs_user_creation(self, mock_db, sample_user):
+        """Test that function logs user creation."""
+        with patch('app.services.auth_service.User', return_value=sample_user), \
+             patch('app.services.auth_service.logger') as mock_logger:
+            create_anonymous_user(mock_db)
+            
+            mock_logger.info.assert_called_once()
+            call_args = mock_logger.info.call_args
+            assert "Anonymous user created" in call_args[0][0] or "user_id" in call_args[1].get("extra", {})
+    
+    def test_create_anonymous_user_creates_user_with_correct_attributes(self, mock_db, sample_user):
+        """Test that created user has correct attributes."""
+        with patch('app.services.auth_service.User', return_value=sample_user):
+            result = create_anonymous_user(mock_db)
+            
+            assert hasattr(result, 'id')
+            assert hasattr(result, 'rol')
+            assert result.rol == UserRoles.USER
 
 
 class TestLoginAnonymous:
