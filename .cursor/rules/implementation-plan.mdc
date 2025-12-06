@@ -171,9 +171,9 @@ This document outlines the step-by-step implementation plan following Clean Arch
 - **Commit**: `feat(schemas): add document analysis schemas - Generated with Cursor` ✅
 
 ### Step 5.4: Document Repository
-- [ ] Create document repository (`app/repositories/document_repository.py`)
-- [ ] CRUD operations for Document model
-- **Commit**: `feat(repositories): add document repository - Generated with Cursor`
+- [x] Create document repository (`app/repositories/document_repository.py`)
+- [x] CRUD operations for Document model
+- **Commit**: `feat(repositories): add document repository - Generated with Cursor` ✅
 
 ### Step 5.5: Document Service
 - [ ] Create document service (`app/services/document_service.py`)
