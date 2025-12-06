@@ -1,8 +1,5 @@
 """Integration tests for events flow."""
-import pytest
 from fastapi import status
-from app.core.security import create_access_token
-from app.core.constants import UserRoles
 
 
 class TestEventsListFlow:

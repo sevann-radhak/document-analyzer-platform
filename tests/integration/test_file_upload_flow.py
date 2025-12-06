@@ -1,5 +1,4 @@
 """Integration tests for file upload flow."""
-import pytest
 import io
 from fastapi import status
 

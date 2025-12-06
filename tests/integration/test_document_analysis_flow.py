@@ -1,9 +1,6 @@
 """Integration tests for document analysis flow."""
-import pytest
 import io
 from fastapi import status
-from app.core.security import create_access_token
-from app.core.constants import UserRoles
 
 
 class TestDocumentUploadFlow:
