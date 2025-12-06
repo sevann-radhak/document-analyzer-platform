@@ -216,9 +216,9 @@ This document outlines the step-by-step implementation plan following Clean Arch
 - **Commit**: `feat(repositories): add event repository with filtering - Generated with Cursor` ✅
 
 ### Step 6.3: Event Schemas
-- [ ] Create event schemas (`app/schemas/event.py`)
-- [ ] EventResponse, EventFilter, EventListResponse
-- **Commit**: `feat(schemas): add event schemas - Generated with Cursor`
+- [x] Create event schemas (`app/schemas/event.py`)
+- [x] EventResponse, EventFilter, EventListResponse
+- **Commit**: `feat(schemas): add event schemas - Generated with Cursor` ✅
 
 ### Step 6.4: Event Endpoint
 - [ ] Create event endpoint (`app/api/v1/endpoints/events.py`)

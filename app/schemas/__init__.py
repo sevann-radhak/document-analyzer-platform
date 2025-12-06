@@ -20,6 +20,11 @@ from app.schemas.document import (
     ProviderInfo,
     ProductItem
 )
+from app.schemas.event import (
+    EventResponse,
+    EventFilter,
+    EventListResponse
+)
 
 __all__ = [
     "LoginRequest",
@@ -37,6 +42,9 @@ __all__ = [
     "DocumentResponse",
     "ClientInfo",
     "ProviderInfo",
-    "ProductItem"
+    "ProductItem",
+    "EventResponse",
+    "EventFilter",
+    "EventListResponse"
 ]
 
