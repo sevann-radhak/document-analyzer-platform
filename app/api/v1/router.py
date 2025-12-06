@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from app.api.v1.endpoints import auth, files
+from app.api.v1.endpoints import auth, files, tokens
 
 api_router = APIRouter(prefix="/api/v1", tags=["v1"])
 
@@ -13,6 +13,12 @@ api_router.include_router(
     files.router,
     prefix="/files",
     tags=["files"]
+)
+
+api_router.include_router(
+    tokens.router,
+    prefix="/auth",
+    tags=["authentication"]
 )
 
 
