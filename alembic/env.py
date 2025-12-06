@@ -4,6 +4,7 @@ from sqlalchemy import pool
 from alembic import context
 from app.core.config import settings
 from app.utils.database import Base
+from app.models import User
 import sys
 from pathlib import Path
 
