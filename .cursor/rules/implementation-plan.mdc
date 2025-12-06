@@ -129,9 +129,9 @@ This document outlines the step-by-step implementation plan following Clean Arch
 **Goal**: JWT token refresh functionality
 
 ### Step 4.1: Token Schemas
-- [ ] Add token refresh schemas to auth schemas
-- [ ] RefreshTokenRequest, RefreshTokenResponse
-- **Commit**: `feat(schemas): add token refresh schemas - Generated with Cursor`
+- [x] Add token refresh schemas to auth schemas
+- [x] RefreshTokenRequest, RefreshTokenResponse
+- **Commit**: `feat(schemas): add token refresh schemas - Generated with Cursor` ✅
 
 ### Step 4.2: Token Service
 - [ ] Extend auth service with token renewal logic
