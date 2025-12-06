@@ -298,4 +298,47 @@ class EventRepository:
             )
         except SQLAlchemyError:
             return []
+    
+    def count_with_filters(
+        self,
+        event_type: Optional[str] = None,
+        user_id: Optional[int] = None,
+        description: Optional[str] = None,
+        start_date: Optional[datetime] = None,
+        end_date: Optional[datetime] = None
+    ) -> int:
+        """
+        Count events matching the filters.
+        
+        Args:
+            event_type: Optional event type filter
+            user_id: Optional user ID filter
+            description: Optional description filter (partial match)
+            start_date: Optional start date filter (inclusive)
+            end_date: Optional end date filter (inclusive)
+        
+        Returns:
+            Total number of events matching the filters
+        """
+        try:
+            query = self.db.query(Event)
+            
+            if event_type:
+                query = query.filter(Event.event_type == event_type)
+            
+            if user_id:
+                query = query.filter(Event.user_id == user_id)
+            
+            if description:
+                query = query.filter(Event.description.ilike(f"%{description}%"))
+            
+            if start_date:
+                query = query.filter(Event.created_at >= start_date)
+            
+            if end_date:
+                query = query.filter(Event.created_at <= end_date)
+            
+            return query.count()
+        except SQLAlchemyError:
+            return 0
 

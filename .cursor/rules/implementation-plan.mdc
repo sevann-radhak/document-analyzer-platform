@@ -221,10 +221,10 @@ This document outlines the step-by-step implementation plan following Clean Arch
 - **Commit**: `feat(schemas): add event schemas - Generated with Cursor` ✅
 
 ### Step 6.4: Event Endpoint
-- [ ] Create event endpoint (`app/api/v1/endpoints/events.py`)
-- [ ] GET /api/v1/events (with filters)
-- [ ] Support query parameters: type, description, start_date, end_date
-- **Commit**: `feat(api): add event history endpoint with filters - Generated with Cursor`
+- [x] Create event endpoint (`app/api/v1/endpoints/events.py`)
+- [x] GET /api/v1/events (with filters)
+- [x] Support query parameters: type, description, start_date, end_date
+- **Commit**: `feat(api): add event history endpoint with filters - Generated with Cursor` ✅
 
 ### Step 6.5: Excel Export Utility
 - [ ] Create Excel export utility (`app/utils/excel_export.py`)

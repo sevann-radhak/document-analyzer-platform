@@ -64,6 +64,9 @@ def get_events(
     db: Session,
     event_type: Optional[str] = None,
     user_id: Optional[int] = None,
+    description: Optional[str] = None,
+    start_date: Optional[datetime] = None,
+    end_date: Optional[datetime] = None,
     skip: int = 0,
     limit: int = 100
 ) -> List[Event]:
@@ -74,6 +77,9 @@ def get_events(
         db: Database session
         event_type: Optional event type filter
         user_id: Optional user ID filter
+        description: Optional description filter (partial match)
+        start_date: Optional start date filter (inclusive)
+        end_date: Optional end date filter (inclusive)
         skip: Number of records to skip (for pagination)
         limit: Maximum number of records to return
     
@@ -84,8 +90,43 @@ def get_events(
     return event_repo.get_events(
         event_type=event_type,
         user_id=user_id,
+        description=description,
+        start_date=start_date,
+        end_date=end_date,
         skip=skip,
         limit=limit
+    )
+
+
+def count_events(
+    db: Session,
+    event_type: Optional[str] = None,
+    user_id: Optional[int] = None,
+    description: Optional[str] = None,
+    start_date: Optional[datetime] = None,
+    end_date: Optional[datetime] = None
+) -> int:
+    """
+    Count events matching the filters.
+    
+    Args:
+        db: Database session
+        event_type: Optional event type filter
+        user_id: Optional user ID filter
+        description: Optional description filter (partial match)
+        start_date: Optional start date filter (inclusive)
+        end_date: Optional end date filter (inclusive)
+    
+    Returns:
+        Total number of events matching the filters
+    """
+    event_repo = EventRepository(db)
+    return event_repo.count_with_filters(
+        event_type=event_type,
+        user_id=user_id,
+        description=description,
+        start_date=start_date,
+        end_date=end_date
     )
 
 
