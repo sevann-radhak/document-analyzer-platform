@@ -53,9 +53,9 @@ This document outlines the step-by-step implementation plan following Clean Arch
 **Goal**: Implement anonymous login with JWT
 
 ### Step 2.1: Auth Schemas
-- [ ] Create auth request/response schemas (`app/schemas/auth.py`)
-- [ ] LoginRequest, LoginResponse, TokenResponse
-- **Commit**: `feat(schemas): add authentication schemas - Generated with Cursor`
+- [x] Create auth request/response schemas (`app/schemas/auth.py`)
+- [x] LoginRequest, LoginResponse, TokenResponse
+- **Commit**: `feat(schemas): add authentication schemas - Generated with Cursor` ✅
 
 ### Step 2.2: Auth Service
 - [ ] Create auth service (`app/services/auth_service.py`)
