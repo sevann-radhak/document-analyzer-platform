@@ -1,7 +1,7 @@
 import pytest
 from datetime import timedelta, datetime, timezone
 from unittest.mock import patch
-from jose import JWTError
+from jwt.exceptions import InvalidTokenError
 from app.core.security import create_access_token, decode_access_token
 from app.core.config import settings
 
@@ -191,7 +191,7 @@ class TestDecodeAccessToken:
     
     def test_decode_access_token_with_wrong_algorithm_returns_none(self):
         """Test that decode_access_token returns None for token with wrong algorithm."""
-        from jose import jwt
+        import jwt
         data = {"id_usuario": 1, "rol": "user", "exp": datetime.now(timezone.utc) + timedelta(minutes=15)}
         wrong_algorithm_token = jwt.encode(data, settings.jwt_secret_key, algorithm="HS512")
         

@@ -1,5 +1,5 @@
 """File upload and validation schemas."""
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from typing import List, Optional, Any
 from datetime import datetime
 from app.core.constants import ValidationErrorType
@@ -16,13 +16,14 @@ class FileUploadRequest(BaseModel):
     param1: Optional[str] = Field(None, description="First additional parameter")
     param2: Optional[str] = Field(None, description="Second additional parameter")
     
-    class Config:
-        json_schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "param1": "value1",
                 "param2": "value2"
             }
         }
+    )
 
 
 class ValidationError(BaseModel):
@@ -54,8 +55,8 @@ class ValidationResult(BaseModel):
         description="List of errors for duplicate records"
     )
     
-    class Config:
-        json_schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "is_valid": False,
                 "total_rows": 100,
@@ -89,6 +90,7 @@ class ValidationResult(BaseModel):
                 ]
             }
         }
+    )
 
 
 class FileUploadResponse(BaseModel):
@@ -102,8 +104,8 @@ class FileUploadResponse(BaseModel):
     param1: Optional[str] = Field(None, description="First additional parameter value")
     param2: Optional[str] = Field(None, description="Second additional parameter value")
     
-    class Config:
-        json_schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "file_id": 1,
                 "filename": "data.csv",
@@ -121,4 +123,5 @@ class FileUploadResponse(BaseModel):
                 "param2": "value2"
             }
         }
+    )
 

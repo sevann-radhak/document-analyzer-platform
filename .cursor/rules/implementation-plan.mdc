@@ -119,9 +119,9 @@ This document outlines the step-by-step implementation plan following Clean Arch
 - **Commit**: `feat(api): add file upload endpoint with RBAC - Generated with Cursor` ✅
 
 ### Step 3.7: Unit Tests - File Service
-- [ ] Create unit tests for file service (10+ test cases)
-- [ ] Mock S3, database, validation
-- **Commit**: `test(files): add unit tests for file upload service - Generated with Cursor`
+- [x] Create unit tests for file service (10+ test cases)
+- [x] Mock S3, database, validation
+- **Commit**: `test(files): add unit tests for file upload service - Generated with Cursor` ✅
 
 ---
 
