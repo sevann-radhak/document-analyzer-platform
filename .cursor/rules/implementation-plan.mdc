@@ -36,10 +36,10 @@ This document outlines the step-by-step implementation plan following Clean Arch
 - **Commit**: `feat(models): add File model for CSV uploads - Generated with Cursor` ✅
 
 ### Step 1.5: Event Model
-- [ ] Create Event model (`app/models/event.py`)
-- [ ] Fields: id, event_type, description, user_id, created_at
-- [ ] Create migration
-- **Commit**: `feat(models): add Event model for logging - Generated with Cursor`
+- [x] Create Event model (`app/models/event.py`)
+- [x] Fields: id, event_type, description, user_id, created_at
+- [x] Create migration
+- **Commit**: `feat(models): add Event model for logging - Generated with Cursor` ✅
 
 ### Step 1.6: Document Model
 - [ ] Create Document model (`app/models/document.py`)
