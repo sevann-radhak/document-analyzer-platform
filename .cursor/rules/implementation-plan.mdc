@@ -101,9 +101,9 @@ This document outlines the step-by-step implementation plan following Clean Arch
 - **Commit**: `feat(utils): add CSV validation logic - Generated with Cursor` ✅
 
 ### Step 3.4: File Repository
-- [ ] Create file repository (`app/repositories/file_repository.py`)
-- [ ] CRUD operations for File model
-- **Commit**: `feat(repositories): add file repository - Generated with Cursor`
+- [x] Create file repository (`app/repositories/file_repository.py`)
+- [x] CRUD operations for File model
+- **Commit**: `feat(repositories): add file repository - Generated with Cursor` ✅
 
 ### Step 3.5: File Service
 - [ ] Create file service (`app/services/file_service.py`)
