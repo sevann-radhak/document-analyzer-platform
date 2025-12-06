@@ -7,13 +7,20 @@ from app.api.v1.router import api_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    """Application lifespan manager - handles startup and shutdown events."""
     if settings.auto_init_db:
         try:
             from scripts.init_db import init_database
-            init_database()
+            print("Initializing database...")
+            success = init_database()
+            if success:
+                print("✓ Database initialization completed successfully")
+            else:
+                print("⚠ Database initialization had issues, but continuing...")
         except Exception as e:
-            print(f"Warning: Could not initialize database automatically: {e}")
-            print("  You may need to run 'python scripts/init_db.py' manually")
+            print(f"⚠ Warning: Could not initialize database automatically: {e}")
+            print("  The application will continue, but database operations may fail.")
+            print("  Ensure your .env file is configured correctly.")
     yield
 
 

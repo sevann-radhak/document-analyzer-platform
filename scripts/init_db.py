@@ -19,15 +19,14 @@ def create_database_if_not_exists():
         
         db_url = settings.get_database_url()
         
-        # Parse the URL - handle both mssql+pyodbc:// and sqlserver+pyodbc://
         if "mssql+pyodbc://" in db_url:
             db_url_clean = db_url.replace("mssql+pyodbc://", "")
         elif "sqlserver+pyodbc://" in db_url:
             db_url_clean = db_url.replace("sqlserver+pyodbc://", "")
         else:
-            raise ValueError(f"Unsupported database URL format: {db_url}")
+            print("✓ Not a SQL Server database, skipping automatic creation.")
+            return True
         
-        # Parse authentication and server parts
         if "@" in db_url_clean:
             auth_part, server_part = db_url_clean.split("@", 1)
             if ":" in auth_part:
@@ -41,7 +40,6 @@ def create_database_if_not_exists():
             password = ""
             server_part = db_url_clean
         
-        # Parse query parameters for driver
         if "?" in server_part:
             server_db, query_string = server_part.split("?", 1)
             query_params = urllib.parse.parse_qs(query_string)
@@ -52,20 +50,17 @@ def create_database_if_not_exists():
             server_db = server_part
             driver = None
         
-        # Get driver if not in URL
         if not driver:
             driver = get_available_odbc_driver()
             if not driver:
                 raise ValueError("No SQL Server ODBC driver found")
         
-        # Parse server and database
         if "/" in server_db:
             server, db_name = server_db.split("/", 1)
         else:
             server = server_db
-            db_name = settings.db_database
+            db_name = settings.db_database or "document_analyzer"
         
-        # Build connection string
         use_windows_auth = "trusted_connection=yes" in db_url or not username
         if use_windows_auth:
             conn_str = f"DRIVER={{{driver}}};SERVER={server};DATABASE=master;Trusted_Connection=yes;"
@@ -96,8 +91,8 @@ def run_migrations():
     """Run Alembic migrations to create/update database schema."""
     try:
         alembic_cfg = Config("alembic.ini")
-        # Ensure Alembic uses the correct database URL from settings
-        alembic_cfg.set_main_option("sqlalchemy.url", settings.get_database_url())
+        database_url = settings.get_database_url()
+        alembic_cfg.attributes['sqlalchemy.url'] = database_url
         command.upgrade(alembic_cfg, "head")
         print("✓ Database migrations executed successfully")
         return True

@@ -7,7 +7,7 @@ class File(BaseModel):
     __tablename__ = "files"
 
     filename = Column(String(500), nullable=False)
-    s3_key = Column(String(1000), nullable=False, unique=True)  # Changed from String to String(1000) for unique constraint
+    s3_key = Column(String(1000), nullable=False, unique=True)
     uploaded_by = Column(Integer, ForeignKey("users.id"), nullable=False)
     validation_results = Column(JSON, nullable=True)
 

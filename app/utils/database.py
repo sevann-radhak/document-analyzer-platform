@@ -6,7 +6,7 @@ from app.core.config import settings
 
 database_url = settings.get_database_url()
 
-if "sqlserver" in database_url:
+if "mssql" in database_url or "sqlserver" in database_url:
     engine = create_engine(
         database_url,
         poolclass=QueuePool,
@@ -16,10 +16,15 @@ if "sqlserver" in database_url:
         echo=settings.debug,
         connect_args={"timeout": 30}
     )
+elif "sqlite" in database_url:
+    engine = create_engine(
+        database_url,
+        connect_args={"check_same_thread": False},
+        echo=settings.debug
+    )
 else:
     engine = create_engine(
         database_url,
-        connect_args={"check_same_thread": False} if "sqlite" in database_url else {},
         echo=settings.debug
     )
 

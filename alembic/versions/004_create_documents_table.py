@@ -26,7 +26,7 @@ def upgrade() -> None:
         sa.Column('file_type', sa.String(length=50), nullable=False),
         sa.Column('classification', sa.String(length=50), nullable=True),
         sa.Column('extracted_data', sa.JSON(), nullable=True),
-        sa.Column('s3_key', sa.String(length=1000), nullable=False),  # Changed to String(1000) for unique constraint
+        sa.Column('s3_key', sa.String(length=1000), nullable=False),
         sa.Column('created_at', sa.DateTime(), nullable=False),
         sa.Column('updated_at', sa.DateTime(), nullable=False),
         sa.PrimaryKeyConstraint('id'),

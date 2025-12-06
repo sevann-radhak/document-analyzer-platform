@@ -3,10 +3,7 @@ from typing import Optional
 
 
 def get_available_odbc_driver() -> Optional[str]:
-    """
-    Detect available SQL Server ODBC driver.
-    Returns the best available driver, prioritizing newer versions.
-    """
+    """Detect available SQL Server ODBC driver, prioritizing newer versions."""
     available_drivers = pyodbc.drivers()
     
     preferred_drivers = [
@@ -29,27 +26,14 @@ def get_available_odbc_driver() -> Optional[str]:
 
 
 def build_database_url(
-    username: str,
-    password: str,
+    username: Optional[str],
+    password: Optional[str],
     server: str,
     database: str,
     use_windows_auth: bool = False,
     driver: Optional[str] = None
 ) -> str:
-    """
-    Build SQL Server connection URL with automatic driver detection.
-    
-    Args:
-        username: Database username (ignored if use_windows_auth=True)
-        password: Database password (ignored if use_windows_auth=True)
-        server: SQL Server hostname
-        database: Database name
-        use_windows_auth: Use Windows Authentication
-        driver: Specific driver to use (auto-detected if None)
-    
-    Returns:
-        SQLAlchemy connection URL string
-    """
+    """Build SQL Server connection URL with automatic driver detection."""
     if driver is None:
         driver = get_available_odbc_driver()
         if driver is None:
@@ -64,7 +48,11 @@ def build_database_url(
     if use_windows_auth:
         url = f"mssql+pyodbc://@{server}/{database}?driver={driver_encoded}&trusted_connection=yes"
     else:
-        url = f"mssql+pyodbc://{username}:{password}@{server}/{database}?driver={driver_encoded}"
+        if not username or not password:
+            raise ValueError("Username and password are required when not using Windows Authentication")
+        from urllib.parse import quote_plus
+        encoded_password = quote_plus(password)
+        url = f"mssql+pyodbc://{username}:{encoded_password}@{server}/{database}?driver={driver_encoded}"
     
     return url
 

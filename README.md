@@ -68,9 +68,9 @@ document-analyzer-platform/
 
 2. **Create Application User:**
    - In SSMS: Security → Logins → New Login
-   - Login name: `document_analyzer_user`
+   - Login name: Choose your username (e.g., `app_user`)
    - Select "SQL Server authentication"
-   - Password: `DocumentAnalyzer2024!` (or your preferred password)
+   - Password: Choose a strong password
    - Uncheck "Enforce password policy" (development only)
    - Server Roles → Check "dbcreator"
    - Click OK
@@ -109,13 +109,13 @@ cp .env.example .env
 
 # Edit .env with your settings
 # Option 1: Complete connection string (full control)
-DATABASE_URL=sqlserver+pyodbc://document_analyzer_user:DocumentAnalyzer2025!@localhost/document_analyzer?driver=ODBC+Driver+17+for+SQL+Server
+# DATABASE_URL=mssql+pyodbc://username:password@server/database_name?driver=ODBC+Driver+17+for+SQL+Server
 
 # Option 2: Individual components (recommended - auto-detects driver)
 DB_SERVER=localhost
 DB_DATABASE=document_analyzer
-DB_USERNAME=document_analyzer_user
-DB_PASSWORD=DocumentAnalyzer2025!
+DB_USERNAME=your_db_username
+DB_PASSWORD=your_db_password
 DB_USE_WINDOWS_AUTH=False
 AUTO_INIT_DB=True
 ```
