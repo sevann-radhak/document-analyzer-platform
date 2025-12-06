@@ -1,8 +1,20 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.exceptions import RequestValidationError
 from contextlib import asynccontextmanager
+from sqlalchemy.exc import SQLAlchemyError
+from botocore.exceptions import ClientError, BotoCoreError
+
 from app.core.config import settings
 from app.api.v1.router import api_router
+from app.core.exceptions import BaseAPIException
+from app.core.exception_handlers import (
+    base_api_exception_handler,
+    validation_exception_handler,
+    sqlalchemy_exception_handler,
+    boto_exception_handler,
+    generic_exception_handler
+)
 
 
 @asynccontextmanager
@@ -40,6 +52,14 @@ app.add_middleware(
 )
 
 app.include_router(api_router)
+
+
+app.add_exception_handler(BaseAPIException, base_api_exception_handler)
+app.add_exception_handler(RequestValidationError, validation_exception_handler)
+app.add_exception_handler(SQLAlchemyError, sqlalchemy_exception_handler)
+app.add_exception_handler(ClientError, boto_exception_handler)
+app.add_exception_handler(BotoCoreError, boto_exception_handler)
+app.add_exception_handler(Exception, generic_exception_handler)
 
 
 @app.get("/")
