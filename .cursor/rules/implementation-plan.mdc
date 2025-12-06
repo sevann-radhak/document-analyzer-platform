@@ -58,10 +58,10 @@ This document outlines the step-by-step implementation plan following Clean Arch
 - **Commit**: `feat(schemas): add authentication schemas - Generated with Cursor` ✅
 
 ### Step 2.2: Auth Service
-- [ ] Create auth service (`app/services/auth_service.py`)
-- [ ] Implement anonymous user creation/login logic
-- [ ] Generate JWT with id_usuario, rol, 15-min expiration
-- **Commit**: `feat(services): implement anonymous authentication service - Generated with Cursor`
+- [x] Create auth service (`app/services/auth_service.py`)
+- [x] Implement anonymous user creation/login logic
+- [x] Generate JWT with id_usuario, rol, 15-min expiration
+- **Commit**: `feat(services): implement anonymous authentication service - Generated with Cursor` ✅
 
 ### Step 2.3: Auth Endpoint
 - [ ] Create auth endpoint (`app/api/v1/endpoints/auth.py`)
