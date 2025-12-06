@@ -5,9 +5,10 @@ from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import and_
 from app.models.event import Event
+from app.repositories.base_repository import BaseRepository
 
 
-class EventRepository:
+class EventRepository(BaseRepository[Event]):
     """Repository for Event model operations."""
     
     def __init__(self, db: Session):
@@ -17,7 +18,7 @@ class EventRepository:
         Args:
             db: SQLAlchemy database session
         """
-        self.db = db
+        super().__init__(db, Event)
     
     def create(
         self,
@@ -39,34 +40,12 @@ class EventRepository:
         Raises:
             SQLAlchemyError: If database operation fails
         """
-        try:
-            event = Event(
-                event_type=event_type,
-                description=description,
-                user_id=user_id
-            )
-            self.db.add(event)
-            self.db.commit()
-            self.db.refresh(event)
-            return event
-        except SQLAlchemyError:
-            self.db.rollback()
-            raise
+        return self._create_entity(
+            event_type=event_type,
+            description=description,
+            user_id=user_id
+        )
     
-    def get_by_id(self, event_id: int) -> Optional[Event]:
-        """
-        Get event by ID.
-        
-        Args:
-            event_id: Event ID
-        
-        Returns:
-            Event object if found, None otherwise
-        """
-        try:
-            return self.db.query(Event).filter(Event.id == event_id).first()
-        except SQLAlchemyError:
-            return None
     
     def get_events(
         self,
@@ -121,31 +100,6 @@ class EventRepository:
         except SQLAlchemyError:
             return []
     
-    def list_all(
-        self,
-        skip: int = 0,
-        limit: int = 100
-    ) -> List[Event]:
-        """
-        List all events with pagination.
-        
-        Args:
-            skip: Number of records to skip (for pagination)
-            limit: Maximum number of records to return
-        
-        Returns:
-            List of Event objects
-        """
-        try:
-            return (
-                self.db.query(Event)
-                .order_by(Event.created_at.desc())
-                .offset(skip)
-                .limit(limit)
-                .all()
-            )
-        except SQLAlchemyError:
-            return []
     
     def update(
         self,
@@ -165,65 +119,18 @@ class EventRepository:
         
         Returns:
             Updated Event object if found, None otherwise
-        
-        Raises:
-            SQLAlchemyError: If database operation fails
         """
-        try:
-            event = self.get_by_id(event_id)
-            if not event:
-                return None
-            
-            if event_type is not None:
-                event.event_type = event_type
-            if description is not None:
-                event.description = description
-            if user_id is not None:
-                event.user_id = user_id
-            
-            self.db.commit()
-            self.db.refresh(event)
-            return event
-        except SQLAlchemyError:
-            self.db.rollback()
-            return None
+        update_data = {}
+        if event_type is not None:
+            update_data['event_type'] = event_type
+        if description is not None:
+            update_data['description'] = description
+        if user_id is not None:
+            update_data['user_id'] = user_id
+        
+        return self._update_entity(event_id, update_data)
     
-    def delete(self, event_id: int) -> bool:
-        """
-        Delete event record.
-        
-        Args:
-            event_id: Event ID to delete
-        
-        Returns:
-            True if deleted successfully, False otherwise
-        
-        Raises:
-            SQLAlchemyError: If database operation fails
-        """
-        try:
-            event = self.get_by_id(event_id)
-            if not event:
-                return False
-            
-            self.db.delete(event)
-            self.db.commit()
-            return True
-        except SQLAlchemyError:
-            self.db.rollback()
-            return False
     
-    def count_all(self) -> int:
-        """
-        Count all events.
-        
-        Returns:
-            Total number of events
-        """
-        try:
-            return self.db.query(Event).count()
-        except SQLAlchemyError:
-            return 0
     
     def count_by_type(self, event_type: str) -> int:
         """

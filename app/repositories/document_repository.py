@@ -3,9 +3,10 @@ from typing import Optional, List, Dict, Any
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
 from app.models.document import Document
+from app.repositories.base_repository import BaseRepository
 
 
-class DocumentRepository:
+class DocumentRepository(BaseRepository[Document]):
     """Repository for Document model operations."""
     
     def __init__(self, db: Session):
@@ -15,7 +16,7 @@ class DocumentRepository:
         Args:
             db: SQLAlchemy database session
         """
-        self.db = db
+        super().__init__(db, Document)
     
     def create(
         self,
@@ -41,36 +42,14 @@ class DocumentRepository:
         Raises:
             SQLAlchemyError: If database operation fails
         """
-        try:
-            document = Document(
-                filename=filename,
-                file_type=file_type,
-                s3_key=s3_key,
-                classification=classification,
-                extracted_data=extracted_data
-            )
-            self.db.add(document)
-            self.db.commit()
-            self.db.refresh(document)
-            return document
-        except SQLAlchemyError:
-            self.db.rollback()
-            raise
+        return self._create_entity(
+            filename=filename,
+            file_type=file_type,
+            s3_key=s3_key,
+            classification=classification,
+            extracted_data=extracted_data
+        )
     
-    def get_by_id(self, document_id: int) -> Optional[Document]:
-        """
-        Get document by ID.
-        
-        Args:
-            document_id: Document ID
-        
-        Returns:
-            Document object if found, None otherwise
-        """
-        try:
-            return self.db.query(Document).filter(Document.id == document_id).first()
-        except SQLAlchemyError:
-            return None
     
     def get_by_s3_key(self, s3_key: str) -> Optional[Document]:
         """
@@ -87,31 +66,6 @@ class DocumentRepository:
         except SQLAlchemyError:
             return None
     
-    def list_all(
-        self,
-        skip: int = 0,
-        limit: int = 100
-    ) -> List[Document]:
-        """
-        List all documents with pagination.
-        
-        Args:
-            skip: Number of records to skip (for pagination)
-            limit: Maximum number of records to return
-        
-        Returns:
-            List of Document objects
-        """
-        try:
-            return (
-                self.db.query(Document)
-                .order_by(Document.created_at.desc())
-                .offset(skip)
-                .limit(limit)
-                .all()
-            )
-        except SQLAlchemyError:
-            return []
     
     def get_by_classification(
         self,
@@ -189,65 +143,18 @@ class DocumentRepository:
         
         Returns:
             Updated Document object if found, None otherwise
-        
-        Raises:
-            SQLAlchemyError: If database operation fails
         """
-        try:
-            document = self.get_by_id(document_id)
-            if not document:
-                return None
-            
-            if filename is not None:
-                document.filename = filename
-            if classification is not None:
-                document.classification = classification
-            if extracted_data is not None:
-                document.extracted_data = extracted_data
-            
-            self.db.commit()
-            self.db.refresh(document)
-            return document
-        except SQLAlchemyError:
-            self.db.rollback()
-            return None
+        update_data = {}
+        if filename is not None:
+            update_data['filename'] = filename
+        if classification is not None:
+            update_data['classification'] = classification
+        if extracted_data is not None:
+            update_data['extracted_data'] = extracted_data
+        
+        return self._update_entity(document_id, update_data)
     
-    def delete(self, document_id: int) -> bool:
-        """
-        Delete document record.
-        
-        Args:
-            document_id: Document ID to delete
-        
-        Returns:
-            True if deleted successfully, False otherwise
-        
-        Raises:
-            SQLAlchemyError: If database operation fails
-        """
-        try:
-            document = self.get_by_id(document_id)
-            if not document:
-                return False
-            
-            self.db.delete(document)
-            self.db.commit()
-            return True
-        except SQLAlchemyError:
-            self.db.rollback()
-            return False
     
-    def count_all(self) -> int:
-        """
-        Count all documents.
-        
-        Returns:
-            Total number of documents
-        """
-        try:
-            return self.db.query(Document).count()
-        except SQLAlchemyError:
-            return 0
     
     def count_by_classification(self, classification: str) -> int:
         """

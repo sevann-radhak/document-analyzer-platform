@@ -3,9 +3,10 @@ from typing import Optional, List, Dict, Any
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
 from app.models.file import File
+from app.repositories.base_repository import BaseRepository
 
 
-class FileRepository:
+class FileRepository(BaseRepository[File]):
     """Repository for File model operations."""
     
     def __init__(self, db: Session):
@@ -15,7 +16,7 @@ class FileRepository:
         Args:
             db: SQLAlchemy database session
         """
-        self.db = db
+        super().__init__(db, File)
     
     def create(
         self,
@@ -39,35 +40,13 @@ class FileRepository:
         Raises:
             SQLAlchemyError: If database operation fails
         """
-        try:
-            file_record = File(
-                filename=filename,
-                s3_key=s3_key,
-                uploaded_by=uploaded_by,
-                validation_results=validation_results
-            )
-            self.db.add(file_record)
-            self.db.commit()
-            self.db.refresh(file_record)
-            return file_record
-        except SQLAlchemyError:
-            self.db.rollback()
-            raise
+        return self._create_entity(
+            filename=filename,
+            s3_key=s3_key,
+            uploaded_by=uploaded_by,
+            validation_results=validation_results
+        )
     
-    def get_by_id(self, file_id: int) -> Optional[File]:
-        """
-        Get file by ID.
-        
-        Args:
-            file_id: File ID
-        
-        Returns:
-            File object if found, None otherwise
-        """
-        try:
-            return self.db.query(File).filter(File.id == file_id).first()
-        except SQLAlchemyError:
-            return None
     
     def get_by_s3_key(self, s3_key: str) -> Optional[File]:
         """
@@ -113,31 +92,6 @@ class FileRepository:
         except SQLAlchemyError:
             return []
     
-    def list_all(
-        self,
-        skip: int = 0,
-        limit: int = 100
-    ) -> List[File]:
-        """
-        List all files with pagination.
-        
-        Args:
-            skip: Number of records to skip (for pagination)
-            limit: Maximum number of records to return
-        
-        Returns:
-            List of File objects
-        """
-        try:
-            return (
-                self.db.query(File)
-                .order_by(File.created_at.desc())
-                .offset(skip)
-                .limit(limit)
-                .all()
-            )
-        except SQLAlchemyError:
-            return []
     
     def update(
         self,
@@ -155,51 +109,15 @@ class FileRepository:
         
         Returns:
             Updated File object if found, None otherwise
-        
-        Raises:
-            SQLAlchemyError: If database operation fails
         """
-        try:
-            file_record = self.get_by_id(file_id)
-            if not file_record:
-                return None
-            
-            if filename is not None:
-                file_record.filename = filename
-            if validation_results is not None:
-                file_record.validation_results = validation_results
-            
-            self.db.commit()
-            self.db.refresh(file_record)
-            return file_record
-        except SQLAlchemyError:
-            self.db.rollback()
-            return None
+        update_data = {}
+        if filename is not None:
+            update_data['filename'] = filename
+        if validation_results is not None:
+            update_data['validation_results'] = validation_results
+        
+        return self._update_entity(file_id, update_data)
     
-    def delete(self, file_id: int) -> bool:
-        """
-        Delete file record.
-        
-        Args:
-            file_id: File ID to delete
-        
-        Returns:
-            True if deleted successfully, False otherwise
-        
-        Raises:
-            SQLAlchemyError: If database operation fails
-        """
-        try:
-            file_record = self.get_by_id(file_id)
-            if not file_record:
-                return False
-            
-            self.db.delete(file_record)
-            self.db.commit()
-            return True
-        except SQLAlchemyError:
-            self.db.rollback()
-            return False
     
     def count_by_user(self, user_id: int) -> int:
         """

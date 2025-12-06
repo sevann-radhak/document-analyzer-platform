@@ -15,13 +15,12 @@ from tests.unit.conftest import mock_db
 @pytest.fixture
 def sample_file_record():
     """Create a sample File model instance."""
-    file_record = File(
-        id=1,
-        filename="test.csv",
-        s3_key="uploads/2025/12/test_1234567890.csv",
-        uploaded_by=1,
-        validation_results={"is_valid": True, "total_rows": 10}
-    )
+    file_record = MagicMock(spec=File)
+    file_record.id = 1
+    file_record.filename = "test.csv"
+    file_record.s3_key = "uploads/2025/12/test_1234567890.csv"
+    file_record.uploaded_by = 1
+    file_record.validation_results = {"is_valid": True, "total_rows": 10}
     file_record.created_at = datetime.now(timezone.utc)
     return file_record
 
