@@ -160,10 +160,10 @@ This document outlines the step-by-step implementation plan following Clean Arch
 - **Commit**: `feat(services): add AI service interface - Generated with Cursor` ✅
 
 ### Step 5.2: OpenAI Integration
-- [ ] Implement OpenAI client integration
-- [ ] Document classification (Invoice/Information)
-- [ ] Text extraction from documents
-- **Commit**: `feat(services): add OpenAI integration for document analysis - Generated with Cursor`
+- [x] Implement OpenAI client integration
+- [x] Document classification (Invoice/Information)
+- [x] Text extraction from documents
+- **Commit**: `feat(services): add OpenAI integration for document analysis - Generated with Cursor` ✅
 
 ### Step 5.3: Document Schemas
 - [ ] Create document schemas (`app/schemas/document.py`)

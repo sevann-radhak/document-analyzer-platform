@@ -51,6 +51,15 @@ class ErrorMessages:
     TOKEN_EXPIRED: Final[str] = "Token has expired"
     TOKEN_INVALID: Final[str] = "Invalid or malformed token"
     TOKEN_REFRESH_ERROR: Final[str] = "Error refreshing token"
+    
+    # AI Service Configuration
+    OPENAI_API_KEY_REQUIRED: Final[str] = "OpenAI API key must be configured in settings"
+    
+    # AI Service Operations
+    AI_CLASSIFICATION_ERROR: Final[str] = "Error classifying document: {error}"
+    AI_EXTRACTION_ERROR: Final[str] = "Error extracting data from document: {error}"
+    AI_UNSUPPORTED_FILE_TYPE: Final[str] = "Unsupported file type: {file_type}. Supported types: PDF, JPG, PNG"
+    AI_DOCUMENT_PROCESSING_ERROR: Final[str] = "Error processing document: {error}"
 
 
 class ValidationMessages:
