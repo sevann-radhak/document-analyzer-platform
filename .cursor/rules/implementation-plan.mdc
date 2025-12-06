@@ -91,9 +91,9 @@ This document outlines the step-by-step implementation plan following Clean Arch
 - **Commit**: `feat(utils): add AWS S3 client wrapper - Generated with Cursor` ✅
 
 ### Step 3.2: File Schemas
-- [ ] Create file upload schemas (`app/schemas/file.py`)
-- [ ] FileUploadRequest, FileUploadResponse, ValidationResult
-- **Commit**: `feat(schemas): add file upload schemas - Generated with Cursor`
+- [x] Create file upload schemas (`app/schemas/file.py`)
+- [x] FileUploadRequest, FileUploadResponse, ValidationResult
+- **Commit**: `feat(schemas): add file upload schemas - Generated with Cursor` ✅
 
 ### Step 3.3: CSV Validator
 - [ ] Create CSV validator utility (`app/utils/validators.py`)

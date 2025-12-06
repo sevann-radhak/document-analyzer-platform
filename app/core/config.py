@@ -26,15 +26,17 @@ class Settings(BaseSettings):
         if self.database_url:
             return self.database_url
         
+        from app.core.constants import ErrorMessages
+        
         if not self.db_server:
-            raise ValueError("DB_SERVER must be set in .env file")
+            raise ValueError(ErrorMessages.DB_SERVER_REQUIRED)
         if not self.db_database:
-            raise ValueError("DB_DATABASE must be set in .env file")
+            raise ValueError(ErrorMessages.DB_DATABASE_REQUIRED)
         if not self.db_use_windows_auth:
             if not self.db_username:
-                raise ValueError("DB_USERNAME must be set in .env file when not using Windows Authentication")
+                raise ValueError(ErrorMessages.DB_USERNAME_REQUIRED)
             if not self.db_password:
-                raise ValueError("DB_PASSWORD must be set in .env file when not using Windows Authentication")
+                raise ValueError(ErrorMessages.DB_PASSWORD_REQUIRED)
         
         from app.utils.db_utils import build_database_url
         

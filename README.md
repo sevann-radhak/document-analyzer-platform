@@ -216,6 +216,10 @@ For production environments:
    python scripts/init_db.py
    ```
 3. Use proper secrets management (AWS Secrets Manager, Azure Key Vault, etc.)
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 4. Configure proper CORS origins
 5. Use production-grade JWT secret keys
 

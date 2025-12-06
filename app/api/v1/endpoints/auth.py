@@ -4,6 +4,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from app.schemas.auth import LoginRequest, LoginResponse
 from app.services.auth_service import login_anonymous
 from app.utils.database import get_db
+from app.core.constants import ErrorMessages
 
 router = APIRouter()
 
@@ -20,7 +21,7 @@ async def login(
     except SQLAlchemyError as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Database error during login"
+            detail=ErrorMessages.DATABASE_ERROR_LOGIN
         ) from e
     except ValueError as e:
         raise HTTPException(
@@ -30,6 +31,6 @@ async def login(
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Unexpected error during login"
+            detail=ErrorMessages.UNEXPECTED_ERROR_LOGIN
         ) from e
 

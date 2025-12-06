@@ -4,6 +4,7 @@ from typing import Optional, BinaryIO
 from botocore.exceptions import ClientError, BotoCoreError
 from botocore.client import BaseClient
 from app.core.config import settings
+from app.core.constants import ErrorMessages
 
 
 class S3Client:
@@ -69,10 +70,10 @@ class S3Client:
             BotoCoreError: If boto3 operation fails
         """
         if not self.bucket_name or self.bucket_name == "your_s3_bucket_name":
-            raise ValueError("S3 bucket name must be configured in settings")
+            raise ValueError(ErrorMessages.S3_BUCKET_REQUIRED)
         
         if not self.access_key_id or self.access_key_id == "your_aws_access_key_id":
-            raise ValueError("AWS access key ID must be configured in settings")
+            raise ValueError(ErrorMessages.AWS_ACCESS_KEY_REQUIRED)
         
         try:
             extra_args = {}
@@ -95,7 +96,7 @@ class S3Client:
                 operation_name='UploadFile'
             ) from e
         except BotoCoreError as e:
-            raise BotoCoreError(f"Boto3 error during file upload: {str(e)}") from e
+            raise BotoCoreError(ErrorMessages.S3_UPLOAD_ERROR.format(error=str(e))) from e
     
     def download_file(self, s3_key: str, file_obj: BinaryIO) -> None:
         """
@@ -111,10 +112,10 @@ class S3Client:
             BotoCoreError: If boto3 operation fails
         """
         if not self.bucket_name or self.bucket_name == "your_s3_bucket_name":
-            raise ValueError("S3 bucket name must be configured in settings")
+            raise ValueError(ErrorMessages.S3_BUCKET_REQUIRED)
         
         if not self.access_key_id or self.access_key_id == "your_aws_access_key_id":
-            raise ValueError("AWS access key ID must be configured in settings")
+            raise ValueError(ErrorMessages.AWS_ACCESS_KEY_REQUIRED)
         
         try:
             self.client.download_fileobj(self.bucket_name, s3_key, file_obj)
@@ -122,7 +123,7 @@ class S3Client:
             error_code = e.response.get('Error', {}).get('Code', 'Unknown')
             if error_code == 'NoSuchKey':
                 raise ClientError(
-                    error_response={'Error': {'Code': 'NoSuchKey', 'Message': f'File {s3_key} not found in bucket'}},
+                    error_response={'Error': {'Code': 'NoSuchKey', 'Message': ErrorMessages.S3_FILE_NOT_FOUND.format(s3_key=s3_key)}},
                     operation_name='DownloadFile'
                 ) from e
             raise ClientError(
@@ -130,7 +131,7 @@ class S3Client:
                 operation_name='DownloadFile'
             ) from e
         except BotoCoreError as e:
-            raise BotoCoreError(f"Boto3 error during file download: {str(e)}") from e
+            raise BotoCoreError(ErrorMessages.S3_DOWNLOAD_ERROR.format(error=str(e))) from e
     
     def delete_file(self, s3_key: str) -> None:
         """
@@ -145,10 +146,10 @@ class S3Client:
             BotoCoreError: If boto3 operation fails
         """
         if not self.bucket_name or self.bucket_name == "your_s3_bucket_name":
-            raise ValueError("S3 bucket name must be configured in settings")
+            raise ValueError(ErrorMessages.S3_BUCKET_REQUIRED)
         
         if not self.access_key_id or self.access_key_id == "your_aws_access_key_id":
-            raise ValueError("AWS access key ID must be configured in settings")
+            raise ValueError(ErrorMessages.AWS_ACCESS_KEY_REQUIRED)
         
         try:
             self.client.delete_object(Bucket=self.bucket_name, Key=s3_key)
@@ -159,7 +160,7 @@ class S3Client:
                 operation_name='DeleteFile'
             ) from e
         except BotoCoreError as e:
-            raise BotoCoreError(f"Boto3 error during file deletion: {str(e)}") from e
+            raise BotoCoreError(ErrorMessages.S3_DELETE_ERROR.format(error=str(e))) from e
     
     def file_exists(self, s3_key: str) -> bool:
         """
@@ -177,10 +178,10 @@ class S3Client:
             BotoCoreError: If boto3 operation fails
         """
         if not self.bucket_name or self.bucket_name == "your_s3_bucket_name":
-            raise ValueError("S3 bucket name must be configured in settings")
+            raise ValueError(ErrorMessages.S3_BUCKET_REQUIRED)
         
         if not self.access_key_id or self.access_key_id == "your_aws_access_key_id":
-            raise ValueError("AWS access key ID must be configured in settings")
+            raise ValueError(ErrorMessages.AWS_ACCESS_KEY_REQUIRED)
         
         try:
             self.client.head_object(Bucket=self.bucket_name, Key=s3_key)
@@ -194,7 +195,7 @@ class S3Client:
                 operation_name='FileExists'
             ) from e
         except BotoCoreError as e:
-            raise BotoCoreError(f"Boto3 error during file existence check: {str(e)}") from e
+            raise BotoCoreError(ErrorMessages.S3_EXISTS_ERROR.format(error=str(e))) from e
     
     def get_presigned_url(self, s3_key: str, expiration: int = 3600) -> str:
         """
@@ -213,10 +214,10 @@ class S3Client:
             BotoCoreError: If boto3 operation fails
         """
         if not self.bucket_name or self.bucket_name == "your_s3_bucket_name":
-            raise ValueError("S3 bucket name must be configured in settings")
+            raise ValueError(ErrorMessages.S3_BUCKET_REQUIRED)
         
         if not self.access_key_id or self.access_key_id == "your_aws_access_key_id":
-            raise ValueError("AWS access key ID must be configured in settings")
+            raise ValueError(ErrorMessages.AWS_ACCESS_KEY_REQUIRED)
         
         try:
             url = self.client.generate_presigned_url(
@@ -232,7 +233,7 @@ class S3Client:
                 operation_name='GeneratePresignedUrl'
             ) from e
         except BotoCoreError as e:
-            raise BotoCoreError(f"Boto3 error during presigned URL generation: {str(e)}") from e
+            raise BotoCoreError(ErrorMessages.S3_PRESIGNED_URL_ERROR.format(error=str(e))) from e
 
 
 def get_s3_client() -> S3Client:

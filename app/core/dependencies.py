@@ -2,7 +2,7 @@ from typing import Dict, Any
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from app.core.security import decode_access_token
-from app.core.constants import TokenType
+from app.core.constants import TokenType, ErrorMessages
 
 
 security = HTTPBearer()
@@ -17,7 +17,7 @@ async def get_current_user(
     if payload is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid authentication credentials",
+            detail=ErrorMessages.INVALID_AUTH_CREDENTIALS,
             headers={"WWW-Authenticate": TokenType.BEARER.capitalize()},
         )
     return payload
