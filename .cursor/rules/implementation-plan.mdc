@@ -30,10 +30,10 @@ This document outlines the step-by-step implementation plan following Clean Arch
 - **Commit**: `feat(models): add User model - Generated with Cursor` ✅
 
 ### Step 1.4: File Model
-- [ ] Create File model (`app/models/file.py`)
-- [ ] Fields: id, filename, s3_key, uploaded_by, created_at, validation_results
-- [ ] Create migration
-- **Commit**: `feat(models): add File model for CSV uploads - Generated with Cursor`
+- [x] Create File model (`app/models/file.py`)
+- [x] Fields: id, filename, s3_key, uploaded_by, created_at, validation_results
+- [x] Create migration
+- **Commit**: `feat(models): add File model for CSV uploads - Generated with Cursor` ✅
 
 ### Step 1.5: Event Model
 - [ ] Create Event model (`app/models/event.py`)
