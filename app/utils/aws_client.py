@@ -237,6 +237,18 @@ class S3Client:
 
 
 def get_s3_client() -> S3Client:
-    """Get a configured S3 client instance."""
+    """
+    Get a configured S3 client instance.
+    
+    Creates and returns an S3Client instance configured with settings from
+    the application configuration (AWS credentials, bucket name, region).
+    
+    Returns:
+        Configured S3Client instance ready for use
+        
+    Note:
+        The client uses lazy initialization - the actual boto3 client is
+        created on first use via the client property.
+    """
     return S3Client()
 

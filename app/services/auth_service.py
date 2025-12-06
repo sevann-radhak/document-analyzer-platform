@@ -11,7 +11,21 @@ logger = get_logger(__name__)
 
 
 def create_anonymous_user(db: Session) -> User:
-    """Create an anonymous user with default role."""
+    """
+    Create an anonymous user with default role.
+    
+    This function creates a new user in the database with the default USER role.
+    Anonymous users are created automatically when users login without credentials.
+    
+    Args:
+        db: SQLAlchemy database session
+        
+    Returns:
+        Created User object with assigned ID and default role
+        
+    Raises:
+        SQLAlchemyError: If database operation fails
+    """
     user = User(rol=UserRoles.USER)
     db.add(user)
     db.commit()
@@ -21,7 +35,27 @@ def create_anonymous_user(db: Session) -> User:
 
 
 def login_anonymous(db: Session) -> Dict[str, Any]:
-    """Perform anonymous login and return authentication response."""
+    """
+    Perform anonymous login and return authentication response.
+    
+    This function creates an anonymous user (if needed) and generates a JWT token
+    with user ID, role, and expiration time. No credentials are required.
+    
+    Args:
+        db: SQLAlchemy database session
+        
+    Returns:
+        Dictionary containing:
+            - id_usuario: User ID
+            - rol: User role
+            - access_token: JWT token string
+            - token_type: Token type (Bearer)
+            - expires_in: Token expiration time in minutes
+        
+    Raises:
+        SQLAlchemyError: If database operation fails
+        Exception: If token generation fails
+    """
     user = create_anonymous_user(db)
 
     expires_delta = timedelta(minutes=settings.jwt_expiration_minutes)
