@@ -10,8 +10,34 @@ class Settings(BaseSettings):
         extra="ignore"
     )
 
-    # Database
-    database_url: str = "sqlserver+pyodbc://username:password@localhost:1433/database_name?driver=ODBC+Driver+17+for+SQL+Server"
+    # Database - Option 1: Direct connection string (takes precedence)
+    database_url: Optional[str] = None
+    
+    # Database - Option 2: Individual components (used if database_url not set)
+    db_server: str = "localhost"
+    db_database: str = "document_analyzer"
+    db_username: str = "document_analyzer_user"
+    db_password: str = "DocumentAnalyzer2025!"
+    db_use_windows_auth: bool = False
+    db_driver: Optional[str] = None
+    
+    auto_init_db: bool = True
+    
+    def get_database_url(self) -> str:
+        """Get database URL, building it automatically if not directly provided."""
+        if self.database_url:
+            return self.database_url
+        
+        from app.utils.db_utils import build_database_url
+        
+        return build_database_url(
+            username=self.db_username,
+            password=self.db_password,
+            server=self.db_server,
+            database=self.db_database,
+            use_windows_auth=self.db_use_windows_auth,
+            driver=self.db_driver
+        )
 
     # AWS
     aws_access_key_id: str = "your_aws_access_key_id"

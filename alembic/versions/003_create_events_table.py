@@ -22,8 +22,8 @@ def upgrade() -> None:
     op.create_table(
         'events',
         sa.Column('id', sa.Integer(), nullable=False),
-        sa.Column('event_type', sa.String(), nullable=False),
-        sa.Column('description', sa.String(), nullable=False),
+        sa.Column('event_type', sa.String(length=100), nullable=False),
+        sa.Column('description', sa.String(length=1000), nullable=False),
         sa.Column('user_id', sa.Integer(), nullable=True),
         sa.Column('created_at', sa.DateTime(), nullable=False),
         sa.Column('updated_at', sa.DateTime(), nullable=False),

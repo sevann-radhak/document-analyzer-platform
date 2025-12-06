@@ -22,8 +22,8 @@ def upgrade() -> None:
     op.create_table(
         'files',
         sa.Column('id', sa.Integer(), nullable=False),
-        sa.Column('filename', sa.String(), nullable=False),
-        sa.Column('s3_key', sa.String(), nullable=False),
+        sa.Column('filename', sa.String(length=500), nullable=False),
+        sa.Column('s3_key', sa.String(length=1000), nullable=False),  # Changed to String(1000) for unique constraint
         sa.Column('uploaded_by', sa.Integer(), nullable=False),
         sa.Column('validation_results', sa.JSON(), nullable=True),
         sa.Column('created_at', sa.DateTime(), nullable=False),

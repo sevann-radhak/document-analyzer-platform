@@ -70,9 +70,9 @@ This document outlines the step-by-step implementation plan following Clean Arch
 - **Commit**: `feat(api): add anonymous login endpoint - Generated with Cursor` ✅
 
 ### Step 2.4: Register Router
-- [ ] Register auth router in main router
-- [ ] Test endpoint
-- **Commit**: `feat(api): register auth router - Generated with Cursor`
+- [x] Register auth router in main router
+- [x] Test endpoint
+- **Commit**: `feat(api): register auth router - Generated with Cursor` ✅
 
 ### Step 2.5: Unit Tests - Auth
 - [ ] Create unit tests for auth service (10+ test cases)

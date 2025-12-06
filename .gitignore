@@ -136,6 +136,8 @@ Thumbs.db
 # Project specific
 *.db
 *.sqlite
+app.db
+test.db
 uploads/
 temp/
 tmp/

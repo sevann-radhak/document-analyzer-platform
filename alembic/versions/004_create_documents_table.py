@@ -22,11 +22,11 @@ def upgrade() -> None:
     op.create_table(
         'documents',
         sa.Column('id', sa.Integer(), nullable=False),
-        sa.Column('filename', sa.String(), nullable=False),
-        sa.Column('file_type', sa.String(), nullable=False),
-        sa.Column('classification', sa.String(), nullable=True),
+        sa.Column('filename', sa.String(length=500), nullable=False),
+        sa.Column('file_type', sa.String(length=50), nullable=False),
+        sa.Column('classification', sa.String(length=50), nullable=True),
         sa.Column('extracted_data', sa.JSON(), nullable=True),
-        sa.Column('s3_key', sa.String(), nullable=False),
+        sa.Column('s3_key', sa.String(length=1000), nullable=False),  # Changed to String(1000) for unique constraint
         sa.Column('created_at', sa.DateTime(), nullable=False),
         sa.Column('updated_at', sa.DateTime(), nullable=False),
         sa.PrimaryKeyConstraint('id'),
