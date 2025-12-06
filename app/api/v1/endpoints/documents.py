@@ -62,10 +62,13 @@ async def upload_document(
                 detail="File is empty"
             )
         
+        user_id = current_user.get("id_usuario")
+        
         response = await upload_and_analyze_document(
             db=db,
             file_content=file_content,
-            filename=file.filename
+            filename=file.filename,
+            user_id=user_id
         )
         
         return response

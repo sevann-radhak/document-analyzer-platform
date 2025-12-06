@@ -10,6 +10,7 @@ from app.repositories.document_repository import DocumentRepository
 from app.utils.aws_client import S3Client, get_s3_client
 from app.services.ai_service import AIServiceInterface, DocumentClassification
 from app.services.openai_service import OpenAIService
+from app.services.event_service import log_document_upload, log_ai_classification
 from app.schemas.document import DocumentResponse, InvoiceData, InformationData
 from app.core.constants import ErrorMessages
 
@@ -80,7 +81,8 @@ async def upload_and_analyze_document(
     db: Session,
     file_content: bytes,
     filename: str,
-    ai_service: Optional[AIServiceInterface] = None
+    ai_service: Optional[AIServiceInterface] = None,
+    user_id: Optional[int] = None
 ) -> DocumentResponse:
     """
     Upload and analyze a document using AI.
@@ -159,6 +161,16 @@ async def upload_and_analyze_document(
     classification = analysis_result["classification"]
     extracted_data_raw = analysis_result["extracted_data"]
     
+    try:
+        log_ai_classification(
+            db=db,
+            filename=filename,
+            classification=classification.value,
+            user_id=user_id
+        )
+    except Exception:
+        pass
+    
     if classification == DocumentClassification.INVOICE:
         extracted_data = InvoiceData(**extracted_data_raw)
     else:
@@ -171,6 +183,17 @@ async def upload_and_analyze_document(
         classification=classification.value,
         extracted_data=extracted_data_raw
     )
+    
+    try:
+        log_document_upload(
+            db=db,
+            filename=filename,
+            classification=classification.value,
+            document_id=document_record.id,
+            user_id=user_id
+        )
+    except Exception:
+        pass
     
     return DocumentResponse(
         document_id=document_record.id,

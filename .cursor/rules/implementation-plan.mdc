@@ -189,9 +189,9 @@ This document outlines the step-by-step implementation plan following Clean Arch
 - **Commit**: `feat(api): add document upload and analysis endpoint - Generated with Cursor` ✅
 
 ### Step 5.7: Event Logging - Document Upload
-- [ ] Extend event service to log document uploads
-- [ ] Log classification results
-- **Commit**: `feat(services): add event logging for document uploads - Generated with Cursor`
+- [x] Extend event service to log document uploads
+- [x] Log classification results
+- **Commit**: `feat(services): add event logging for document uploads - Generated with Cursor` ✅
 
 ### Step 5.8: Unit Tests - Document Service
 - [ ] Create unit tests for document service (10+ test cases)
