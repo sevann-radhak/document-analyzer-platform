@@ -150,15 +150,43 @@ Once the application is running, access the interactive API documentation:
 
 ## Environment Variables
 
-See `.env.example` for all available environment variables:
+See `.env.example` for all available environment variables with detailed descriptions.
 
-- `DATABASE_URL`: SQL Server connection string
-- `AWS_ACCESS_KEY_ID`: AWS credentials for S3
-- `AWS_SECRET_ACCESS_KEY`: AWS secret key
-- `AWS_S3_BUCKET_NAME`: S3 bucket name
-- `JWT_SECRET_KEY`: Secret key for JWT tokens
-- `OPENAI_API_KEY`: OpenAI API key (optional)
-- `AZURE_COGNITIVE_SERVICES_KEY`: Azure key (optional)
+### Required Variables
+
+**Database (choose one approach):**
+- Option 1: `DATABASE_URL` - Complete SQL Server connection string
+- Option 2: Individual components (recommended):
+  - `DB_SERVER` - SQL Server hostname or IP
+  - `DB_DATABASE` - Database name
+  - `DB_USERNAME` - Database username (if not using Windows Auth)
+  - `DB_PASSWORD` - Database password (if not using Windows Auth)
+  - `DB_USE_WINDOWS_AUTH` - Set to `True` for Windows Authentication
+  - `AUTO_INIT_DB` - Set to `True` to auto-initialize database on startup
+
+**AWS S3:**
+- `AWS_ACCESS_KEY_ID` - AWS access key for S3 operations
+- `AWS_SECRET_ACCESS_KEY` - AWS secret key
+- `AWS_S3_BUCKET_NAME` - S3 bucket name for file storage
+- `AWS_REGION` - AWS region (default: `us-east-1`)
+
+**JWT Authentication:**
+- `JWT_SECRET_KEY` - Secret key for JWT token signing (minimum 32 characters)
+- `JWT_ALGORITHM` - JWT algorithm (default: `HS256`)
+- `JWT_EXPIRATION_MINUTES` - Token expiration time in minutes (default: `15`)
+
+**AI Services:**
+- `OPENAI_API_KEY` - OpenAI API key for document analysis (required for AI features)
+
+### Optional Variables
+
+- `AZURE_COGNITIVE_SERVICES_KEY` - Azure Cognitive Services key (alternative to OpenAI)
+- `AZURE_COGNITIVE_SERVICES_ENDPOINT` - Azure Cognitive Services endpoint
+- `DB_DRIVER` - Custom ODBC driver (auto-detected if not specified)
+- `APP_NAME` - Application name (default: `Document Analyzer Platform`)
+- `APP_VERSION` - Application version (default: `1.0.0`)
+- `DEBUG` - Enable debug mode (default: `False`)
+- `LOG_LEVEL` - Logging level: `DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL` (default: `INFO`)
 
 ## Testing
 
