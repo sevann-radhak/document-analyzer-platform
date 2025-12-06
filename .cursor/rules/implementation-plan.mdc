@@ -1,0 +1,349 @@
+---
+alwaysApply: true
+---
+
+# Implementation Plan - Document Analyzer Platform
+
+## Overview
+This document outlines the step-by-step implementation plan following Clean Architecture principles. Each phase should be completed with small, granular commits.
+
+## Phase 1: Database Setup & Models (Foundation)
+**Goal**: Set up database connection and create domain models
+
+### Step 1.1: Database Configuration
+- [ ] Create database connection utility (`app/utils/database.py`)
+- [ ] Configure SQLAlchemy engine and session
+- [ ] Add database dependency injection
+- **Commit**: `feat(database): add database connection and session management - Generated with Cursor`
+
+### Step 1.2: Base Model
+- [ ] Create base model class with common fields (id, created_at, updated_at)
+- [ ] Set up Alembic for migrations
+- **Commit**: `feat(models): add base model and migration setup - Generated with Cursor`
+
+### Step 1.3: User Model
+- [ ] Create User model (`app/models/user.py`)
+- [ ] Fields: id, created_at, updated_at
+- [ ] Create migration
+- **Commit**: `feat(models): add User model - Generated with Cursor`
+
+### Step 1.4: File Model
+- [ ] Create File model (`app/models/file.py`)
+- [ ] Fields: id, filename, s3_key, uploaded_by, created_at, validation_results
+- [ ] Create migration
+- **Commit**: `feat(models): add File model for CSV uploads - Generated with Cursor`
+
+### Step 1.5: Event Model
+- [ ] Create Event model (`app/models/event.py`)
+- [ ] Fields: id, event_type, description, user_id, created_at
+- [ ] Create migration
+- **Commit**: `feat(models): add Event model for logging - Generated with Cursor`
+
+### Step 1.6: Document Model
+- [ ] Create Document model (`app/models/document.py`)
+- [ ] Fields: id, filename, file_type, classification, extracted_data, s3_key, created_at
+- [ ] Create migration
+- **Commit**: `feat(models): add Document model for AI analysis - Generated with Cursor`
+
+---
+
+## Phase 2: Authentication & Security (Part 1 - API 1)
+**Goal**: Implement anonymous login with JWT
+
+### Step 2.1: Auth Schemas
+- [ ] Create auth request/response schemas (`app/schemas/auth.py`)
+- [ ] LoginRequest, LoginResponse, TokenResponse
+- **Commit**: `feat(schemas): add authentication schemas - Generated with Cursor`
+
+### Step 2.2: Auth Service
+- [ ] Create auth service (`app/services/auth_service.py`)
+- [ ] Implement anonymous user creation/login logic
+- [ ] Generate JWT with id_usuario, rol, 15-min expiration
+- **Commit**: `feat(services): implement anonymous authentication service - Generated with Cursor`
+
+### Step 2.3: Auth Endpoint
+- [ ] Create auth endpoint (`app/api/v1/endpoints/auth.py`)
+- [ ] POST /api/v1/auth/login
+- [ ] Return JWT token
+- **Commit**: `feat(api): add anonymous login endpoint - Generated with Cursor`
+
+### Step 2.4: Register Router
+- [ ] Register auth router in main router
+- [ ] Test endpoint
+- **Commit**: `feat(api): register auth router - Generated with Cursor`
+
+### Step 2.5: Unit Tests - Auth
+- [ ] Create unit tests for auth service (10+ test cases)
+- [ ] Test JWT generation, expiration, payload
+- **Commit**: `test(auth): add unit tests for authentication - Generated with Cursor`
+
+---
+
+## Phase 3: File Upload & Validation (Part 1 - API 2)
+**Goal**: CSV upload with S3 storage and validation
+
+### Step 3.1: AWS S3 Client
+- [ ] Create AWS S3 client utility (`app/utils/aws_client.py`)
+- [ ] Implement upload, download, delete methods
+- [ ] Add error handling
+- **Commit**: `feat(utils): add AWS S3 client wrapper - Generated with Cursor`
+
+### Step 3.2: File Schemas
+- [ ] Create file upload schemas (`app/schemas/file.py`)
+- [ ] FileUploadRequest, FileUploadResponse, ValidationResult
+- **Commit**: `feat(schemas): add file upload schemas - Generated with Cursor`
+
+### Step 3.3: CSV Validator
+- [ ] Create CSV validator utility (`app/utils/validators.py`)
+- [ ] Validate empty values, incorrect types, duplicates
+- **Commit**: `feat(utils): add CSV validation logic - Generated with Cursor`
+
+### Step 3.4: File Repository
+- [ ] Create file repository (`app/repositories/file_repository.py`)
+- [ ] CRUD operations for File model
+- **Commit**: `feat(repositories): add file repository - Generated with Cursor`
+
+### Step 3.5: File Service
+- [ ] Create file service (`app/services/file_service.py`)
+- [ ] Implement upload logic: S3 upload + DB save + validation
+- [ ] Return validation results
+- **Commit**: `feat(services): implement file upload service - Generated with Cursor`
+
+### Step 3.6: File Endpoint
+- [ ] Create file endpoint (`app/api/v1/endpoints/files.py`)
+- [ ] POST /api/v1/files/upload
+- [ ] Add JWT authentication dependency
+- [ ] Add role-based access control
+- **Commit**: `feat(api): add file upload endpoint with RBAC - Generated with Cursor`
+
+### Step 3.7: Unit Tests - File Service
+- [ ] Create unit tests for file service (10+ test cases)
+- [ ] Mock S3, database, validation
+- **Commit**: `test(files): add unit tests for file upload service - Generated with Cursor`
+
+---
+
+## Phase 4: Token Renewal (Part 1 - API 3)
+**Goal**: JWT token refresh functionality
+
+### Step 4.1: Token Schemas
+- [ ] Add token refresh schemas to auth schemas
+- [ ] RefreshTokenRequest, RefreshTokenResponse
+- **Commit**: `feat(schemas): add token refresh schemas - Generated with Cursor`
+
+### Step 4.2: Token Service
+- [ ] Extend auth service with token renewal logic
+- [ ] Validate token expiration
+- [ ] Generate new token with extended expiration
+- **Commit**: `feat(services): add token renewal logic - Generated with Cursor`
+
+### Step 4.3: Token Endpoint
+- [ ] Create token endpoint (`app/api/v1/endpoints/tokens.py`)
+- [ ] POST /api/v1/auth/refresh
+- [ ] Validate existing token
+- **Commit**: `feat(api): add token renewal endpoint - Generated with Cursor`
+
+### Step 4.4: Unit Tests - Token Renewal
+- [ ] Create unit tests for token renewal (10+ test cases)
+- **Commit**: `test(auth): add unit tests for token renewal - Generated with Cursor`
+
+---
+
+## Phase 5: Document Analysis - AI Integration (Part 2 - Module 1)
+**Goal**: Document upload and AI-powered analysis
+
+### Step 5.1: AI Service Interface
+- [ ] Create AI service interface (`app/services/ai_service.py`)
+- [ ] Define abstract methods for document classification and extraction
+- **Commit**: `feat(services): add AI service interface - Generated with Cursor`
+
+### Step 5.2: OpenAI Integration
+- [ ] Implement OpenAI client integration
+- [ ] Document classification (Invoice/Information)
+- [ ] Text extraction from documents
+- **Commit**: `feat(services): add OpenAI integration for document analysis - Generated with Cursor`
+
+### Step 5.3: Document Schemas
+- [ ] Create document schemas (`app/schemas/document.py`)
+- [ ] DocumentUploadRequest, InvoiceData, InformationData, DocumentResponse
+- **Commit**: `feat(schemas): add document analysis schemas - Generated with Cursor`
+
+### Step 5.4: Document Repository
+- [ ] Create document repository (`app/repositories/document_repository.py`)
+- [ ] CRUD operations for Document model
+- **Commit**: `feat(repositories): add document repository - Generated with Cursor`
+
+### Step 5.5: Document Service
+- [ ] Create document service (`app/services/document_service.py`)
+- [ ] Implement upload, classification, extraction logic
+- [ ] Handle Invoice vs Information differently
+- **Commit**: `feat(services): implement document analysis service - Generated with Cursor`
+
+### Step 5.6: Document Endpoint
+- [ ] Create document endpoint (`app/api/v1/endpoints/documents.py`)
+- [ ] POST /api/v1/documents/upload
+- [ ] Accept PDF, JPG, PNG
+- [ ] Return classification and extracted data
+- **Commit**: `feat(api): add document upload and analysis endpoint - Generated with Cursor`
+
+### Step 5.7: Event Logging - Document Upload
+- [ ] Extend event service to log document uploads
+- [ ] Log classification results
+- **Commit**: `feat(services): add event logging for document uploads - Generated with Cursor`
+
+### Step 5.8: Unit Tests - Document Service
+- [ ] Create unit tests for document service (10+ test cases)
+- [ ] Mock AI service, S3, database
+- **Commit**: `test(documents): add unit tests for document analysis - Generated with Cursor`
+
+---
+
+## Phase 6: Event Log & History (Part 2 - Module 2)
+**Goal**: Event logging and historical module
+
+### Step 6.1: Event Service
+- [ ] Create event service (`app/services/event_service.py`)
+- [ ] Implement event creation and retrieval
+- [ ] Support different event types
+- **Commit**: `feat(services): add event service for logging - Generated with Cursor`
+
+### Step 6.2: Event Repository
+- [ ] Create event repository (`app/repositories/event_repository.py`)
+- [ ] CRUD operations with filtering
+- [ ] Filter by type, description, date range
+- **Commit**: `feat(repositories): add event repository with filtering - Generated with Cursor`
+
+### Step 6.3: Event Schemas
+- [ ] Create event schemas (`app/schemas/event.py`)
+- [ ] EventResponse, EventFilter, EventListResponse
+- **Commit**: `feat(schemas): add event schemas - Generated with Cursor`
+
+### Step 6.4: Event Endpoint
+- [ ] Create event endpoint (`app/api/v1/endpoints/events.py`)
+- [ ] GET /api/v1/events (with filters)
+- [ ] Support query parameters: type, description, start_date, end_date
+- **Commit**: `feat(api): add event history endpoint with filters - Generated with Cursor`
+
+### Step 6.5: Excel Export Utility
+- [ ] Create Excel export utility (`app/utils/excel_export.py`)
+- [ ] Export events to Excel format
+- **Commit**: `feat(utils): add Excel export functionality - Generated with Cursor`
+
+### Step 6.6: Excel Export Endpoint
+- [ ] Add GET /api/v1/events/export endpoint
+- [ ] Return Excel file with filtered events
+- **Commit**: `feat(api): add Excel export endpoint for events - Generated with Cursor`
+
+### Step 6.7: Unit Tests - Event Service
+- [ ] Create unit tests for event service (10+ test cases)
+- [ ] Test filtering, export functionality
+- **Commit**: `test(events): add unit tests for event service - Generated with Cursor`
+
+---
+
+## Phase 7: Integration & Testing
+**Goal**: Complete integration and comprehensive testing
+
+### Step 7.1: Integration Tests
+- [ ] Create integration tests for all endpoints
+- [ ] Test complete flows (login -> upload -> analysis)
+- **Commit**: `test(integration): add integration tests for API flows - Generated with Cursor`
+
+### Step 7.2: Error Handling
+- [ ] Create custom exception classes
+- [ ] Add global exception handlers
+- [ ] Return appropriate HTTP status codes
+- **Commit**: `feat(core): add custom exceptions and error handling - Generated with Cursor`
+
+### Step 7.3: API Documentation
+- [ ] Add descriptions to all endpoints
+- [ ] Document request/response examples
+- [ ] Verify Swagger UI completeness
+- **Commit**: `docs(api): enhance API documentation - Generated with Cursor`
+
+### Step 7.4: Logging Setup
+- [ ] Configure application logging
+- [ ] Add structured logging for events
+- **Commit**: `feat(core): add structured logging configuration - Generated with Cursor`
+
+---
+
+## Phase 8: Refactoring & Optimization (Part 3)
+**Goal**: AI-assisted refactoring and optimization
+
+### Step 8.1: Code Review & Refactoring Plan
+- [ ] Review all code for optimization opportunities
+- [ ] Identify areas for refactoring
+- **Commit**: `chore: code review and refactoring plan - Generated with Cursor`
+
+### Step 8.2: Refactoring Session 1
+- [ ] Commit original code
+- [ ] Refactor with AI (ChatGPT/Copilot/Claude)
+- [ ] **Commit**: `refactor(scope): refactoring with [AI Name] - description - Generated with Cursor`
+
+### Step 8.3: Refactoring Session 2
+- [ ] Continue refactoring other modules
+- [ ] **Commit**: `refactor(scope): refactoring with [AI Name] - description - Generated with Cursor`
+
+### Step 8.4: Documentation Generation
+- [ ] Generate function documentation with AI
+- [ ] Add docstrings to all functions
+- **Commit**: `docs: add AI-generated function documentation - Generated with Cursor`
+
+### Step 8.5: Test Coverage Enhancement
+- [ ] Ensure 10+ test cases per method
+- [ ] Achieve >80% test coverage
+- **Commit**: `test: enhance test coverage to meet requirements - Generated with Cursor`
+
+---
+
+## Phase 9: Final Polish
+**Goal**: Final adjustments and deployment preparation
+
+### Step 9.1: Environment Configuration
+- [ ] Verify all environment variables are documented
+- [ ] Update .env.example with all required variables
+- **Commit**: `docs(config): update environment variables documentation - Generated with Cursor`
+
+### Step 9.2: README Updates
+- [ ] Update README with setup instructions
+- [ ] Add API usage examples
+- [ ] Document deployment process
+- **Commit**: `docs: update README with complete setup guide - Generated with Cursor`
+
+### Step 9.3: Final Testing
+- [ ] Run full test suite
+- [ ] Manual testing of all endpoints
+- [ ] Verify all requirements are met
+- **Commit**: `test: final testing and verification - Generated with Cursor`
+
+### Step 9.4: Code Cleanup
+- [ ] Remove unused code
+- [ ] Fix any linting issues
+- [ ] Final code review
+- **Commit**: `chore: final code cleanup and linting - Generated with Cursor`
+
+---
+
+## Commit Strategy Reminders
+- Each step should be a separate commit
+- Use conventional commit format: `type(scope): description`
+- Before refactoring: commit original code first
+- Refactoring commits must include: "Refactoring with [AI Name]"
+- Keep commits small and focused
+- Test before committing
+
+## Testing Requirements
+- Minimum 10 unit test cases per method
+- Use Pytest
+- Mock external dependencies (AWS, AI services, database)
+- Separate unit tests from integration tests
+- Achieve >80% test coverage
+
+## Notes
+- Follow Clean Architecture principles throughout
+- Use dependency injection
+- Keep business logic independent of frameworks
+- Write self-documenting code
+- Use type hints everywhere
+- Follow PEP 8 conventions
