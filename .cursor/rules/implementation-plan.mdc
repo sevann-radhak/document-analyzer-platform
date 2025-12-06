@@ -42,10 +42,10 @@ This document outlines the step-by-step implementation plan following Clean Arch
 - **Commit**: `feat(models): add Event model for logging - Generated with Cursor` ✅
 
 ### Step 1.6: Document Model
-- [ ] Create Document model (`app/models/document.py`)
-- [ ] Fields: id, filename, file_type, classification, extracted_data, s3_key, created_at
-- [ ] Create migration
-- **Commit**: `feat(models): add Document model for AI analysis - Generated with Cursor`
+- [x] Create Document model (`app/models/document.py`)
+- [x] Fields: id, filename, file_type, classification, extracted_data, s3_key, created_at
+- [x] Create migration
+- **Commit**: `feat(models): add Document model for AI analysis - Generated with Cursor` ✅
 
 ---
 
