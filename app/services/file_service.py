@@ -8,6 +8,10 @@ from app.utils.aws_client import S3Client, get_s3_client
 from app.utils.validators import CSVValidator, validate_csv
 from app.schemas.file import FileUploadResponse, ValidationResult
 from app.models.file import File
+from app.core.logging_config import get_logger
+from app.utils.logger import log_event
+
+logger = get_logger(__name__)
 
 
 def generate_s3_key(filename: str) -> str:
@@ -108,6 +112,22 @@ def upload_csv_file(
         s3_key=s3_key,
         uploaded_by=uploaded_by,
         validation_results=validation_results_dict
+    )
+    
+    import logging
+    log_event(
+        logger=logger,
+        level=logging.INFO,
+        message=f"CSV file uploaded: {filename}",
+        file_id=file_record.id,
+        user_id=uploaded_by,
+        extra={
+            "filename": filename,
+            "s3_key": s3_key,
+            "is_valid": validation_result.is_valid,
+            "total_errors": validation_result.total_errors,
+            "total_rows": validation_result.total_rows
+        }
     )
     
     return FileUploadResponse(

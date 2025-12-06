@@ -13,6 +13,10 @@ from app.services.openai_service import OpenAIService
 from app.services.event_service import log_document_upload, log_ai_classification
 from app.schemas.document import DocumentResponse, InvoiceData, InformationData
 from app.core.constants import ErrorMessages
+from app.core.logging_config import get_logger
+from app.utils.logger import log_event
+
+logger = get_logger(__name__)
 
 
 def generate_document_s3_key(filename: str) -> str:
@@ -182,6 +186,21 @@ async def upload_and_analyze_document(
         s3_key=s3_key,
         classification=classification.value,
         extracted_data=extracted_data_raw
+    )
+    
+    import logging
+    log_event(
+        logger=logger,
+        level=logging.INFO,
+        message=f"Document analyzed: {filename} -> {classification.value}",
+        document_id=document_record.id,
+        user_id=user_id,
+        extra={
+            "filename": filename,
+            "file_type": file_type,
+            "classification": classification.value,
+            "s3_key": s3_key
+        }
     )
     
     try:

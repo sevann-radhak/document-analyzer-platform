@@ -5,6 +5,9 @@ from app.models.user import User
 from app.core.security import create_access_token, decode_access_token
 from app.core.config import settings
 from app.core.constants import UserRoles, TokenType, ErrorMessages
+from app.core.logging_config import get_logger
+
+logger = get_logger(__name__)
 
 
 def create_anonymous_user(db: Session) -> User:
@@ -13,19 +16,25 @@ def create_anonymous_user(db: Session) -> User:
     db.add(user)
     db.commit()
     db.refresh(user)
+    logger.info(f"Anonymous user created", extra={"user_id": user.id, "role": user.rol})
     return user
 
 
 def login_anonymous(db: Session) -> Dict[str, Any]:
     """Perform anonymous login and return authentication response."""
     user = create_anonymous_user(db)
-    
+
     expires_delta = timedelta(minutes=settings.jwt_expiration_minutes)
     access_token = create_access_token(
         data={"id_usuario": user.id, "rol": user.rol},
         expires_delta=expires_delta
     )
     
+    logger.info(
+        "Anonymous login successful",
+        extra={"user_id": user.id, "role": user.rol, "expires_in": settings.jwt_expiration_minutes}
+    )
+
     return {
         "id_usuario": user.id,
         "rol": user.rol,

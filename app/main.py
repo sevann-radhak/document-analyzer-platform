@@ -6,6 +6,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from botocore.exceptions import ClientError, BotoCoreError
 
 from app.core.config import settings
+from app.core.logging_config import setup_logging, get_logger
 from app.api.v1.router import api_router
 from app.core.exceptions import BaseAPIException
 from app.core.exception_handlers import (
@@ -16,24 +17,35 @@ from app.core.exception_handlers import (
     generic_exception_handler
 )
 
+setup_logging()
+logger = get_logger(__name__)
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Application lifespan manager - handles startup and shutdown events."""
+    logger.info("Application starting up", extra={"app_name": settings.app_name, "version": settings.app_version})
+    
     if settings.auto_init_db:
         try:
             from scripts.init_db import init_database
-            print("Initializing database...")
+            logger.info("Initializing database...")
             success = init_database()
             if success:
-                print("✓ Database initialization completed successfully")
+                logger.info("Database initialization completed successfully")
             else:
-                print("⚠ Database initialization had issues, but continuing...")
+                logger.warning("Database initialization had issues, but continuing...")
         except Exception as e:
-            print(f"⚠ Warning: Could not initialize database automatically: {e}")
-            print("  The application will continue, but database operations may fail.")
-            print("  Ensure your .env file is configured correctly.")
+            logger.error(
+                "Could not initialize database automatically",
+                exc_info=True,
+                extra={"error": str(e)}
+            )
+            logger.warning("The application will continue, but database operations may fail. Ensure your .env file is configured correctly.")
+    
     yield
+    
+    logger.info("Application shutting down")
 
 
 app = FastAPI(

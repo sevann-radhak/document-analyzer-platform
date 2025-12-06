@@ -1,9 +1,14 @@
 """Event service for logging and retrieving application events."""
+import logging
 from typing import Optional, List
 from datetime import datetime
 from sqlalchemy.orm import Session
 from app.repositories.event_repository import EventRepository
 from app.models.event import Event
+from app.core.logging_config import get_logger
+from app.utils.logger import log_event
+
+logger = get_logger(__name__)
 
 
 class EventType:
@@ -35,11 +40,22 @@ def create_event(
         SQLAlchemyError: If database operation fails
     """
     event_repo = EventRepository(db)
-    return event_repo.create(
+    event = event_repo.create(
         event_type=event_type,
         description=description,
         user_id=user_id
     )
+    
+    log_event(
+        logger=logger,
+        level=logging.INFO,
+        message=f"Event created: {event_type}",
+        event_type=event_type,
+        user_id=user_id,
+        extra={"event_id": event.id, "description": description}
+    )
+    
+    return event
 
 
 def get_event_by_id(
@@ -155,6 +171,16 @@ def log_document_upload(
         f"Document ID: {document_id}"
     )
     
+    log_event(
+        logger=logger,
+        level=logging.INFO,
+        message=f"Document uploaded: {filename}",
+        event_type=EventType.DOCUMENT_UPLOAD,
+        user_id=user_id,
+        document_id=document_id,
+        extra={"filename": filename, "classification": classification}
+    )
+    
     return create_event(
         db=db,
         event_type=EventType.DOCUMENT_UPLOAD,
@@ -183,6 +209,15 @@ def log_ai_classification(
     """
     description = (
         f"AI classified document '{filename}' as '{classification}'"
+    )
+    
+    log_event(
+        logger=logger,
+        level=logging.INFO,
+        message=f"AI classification: {filename} -> {classification}",
+        event_type=EventType.AI,
+        user_id=user_id,
+        extra={"filename": filename, "classification": classification}
     )
     
     return create_event(
