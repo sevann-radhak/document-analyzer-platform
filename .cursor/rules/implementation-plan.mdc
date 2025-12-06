@@ -64,10 +64,10 @@ This document outlines the step-by-step implementation plan following Clean Arch
 - **Commit**: `feat(services): implement anonymous authentication service - Generated with Cursor` ✅
 
 ### Step 2.3: Auth Endpoint
-- [ ] Create auth endpoint (`app/api/v1/endpoints/auth.py`)
-- [ ] POST /api/v1/auth/login
-- [ ] Return JWT token
-- **Commit**: `feat(api): add anonymous login endpoint - Generated with Cursor`
+- [x] Create auth endpoint (`app/api/v1/endpoints/auth.py`)
+- [x] POST /api/v1/auth/login
+- [x] Return JWT token
+- **Commit**: `feat(api): add anonymous login endpoint - Generated with Cursor` ✅
 
 ### Step 2.4: Register Router
 - [ ] Register auth router in main router
