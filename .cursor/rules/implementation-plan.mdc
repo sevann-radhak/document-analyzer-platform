@@ -75,9 +75,9 @@ This document outlines the step-by-step implementation plan following Clean Arch
 - **Commit**: `feat(api): register auth router - Generated with Cursor` ✅
 
 ### Step 2.5: Unit Tests - Auth
-- [ ] Create unit tests for auth service (10+ test cases)
-- [ ] Test JWT generation, expiration, payload
-- **Commit**: `test(auth): add unit tests for authentication - Generated with Cursor`
+- [x] Create unit tests for auth service (10+ test cases)
+- [x] Test JWT generation, expiration, payload
+- **Commit**: `test(auth): add unit tests for authentication - Generated with Cursor` ✅
 
 ---
 
