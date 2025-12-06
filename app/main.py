@@ -40,7 +40,44 @@ app = FastAPI(
     title=settings.app_name,
     version=settings.app_version,
     debug=settings.debug,
-    lifespan=lifespan
+    lifespan=lifespan,
+    description="""
+    Document Analyzer Platform API
+    
+    A comprehensive platform for document analysis, file management, and event logging.
+    
+    ## Features
+    
+    * **Authentication**: Anonymous login with JWT tokens
+    * **File Upload**: CSV file validation and storage
+    * **Document Analysis**: AI-powered document classification and data extraction
+    * **Event Logging**: Comprehensive event history with filtering and export
+    
+    ## Authentication
+    
+    Most endpoints require authentication using JWT Bearer tokens.
+    Obtain a token by calling the `/api/v1/auth/login` endpoint.
+    
+    ## Document Analysis
+    
+    Upload PDF, JPG, or PNG documents for automatic classification:
+    - **Invoice**: Extracts client, provider, invoice details, products, and totals
+    - **Information**: Extracts description, summary, and sentiment analysis
+    
+    ## Event Logging
+    
+    All document uploads and AI operations are automatically logged.
+    View and export events with flexible filtering options.
+    """,
+    terms_of_service="https://example.com/terms/",
+    contact={
+        "name": "API Support",
+        "email": "support@example.com",
+    },
+    license_info={
+        "name": "MIT",
+        "url": "https://opensource.org/licenses/MIT",
+    }
 )
 
 app.add_middleware(

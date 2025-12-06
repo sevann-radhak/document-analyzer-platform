@@ -10,7 +10,21 @@ router = APIRouter()
 @router.post(
     "/refresh",
     response_model=RefreshTokenResponse,
-    status_code=status.HTTP_200_OK
+    status_code=status.HTTP_200_OK,
+    summary="Refresh JWT Token",
+    description="""
+    Refresh an existing JWT access token.
+    
+    This endpoint:
+    - Validates the current token (must not be expired)
+    - Extracts user ID and role from the token
+    - Generates a new token with extended expiration time (15 minutes)
+    - Returns the new token
+    
+    The token must be valid and not expired to be refreshed.
+    """,
+    response_description="New JWT token with extended expiration",
+    tags=["authentication"]
 )
 async def refresh_access_token(
     request: RefreshTokenRequest
@@ -18,10 +32,33 @@ async def refresh_access_token(
     """
     Refresh a JWT access token.
     
-    Validates the current token and generates a new one with extended expiration time.
-    The token must not be expired to be refreshed.
+    **Request Body**:
+    - `token`: Current JWT token to refresh
     
-    Returns a new access token with the same user data and extended expiration.
+    **Response**:
+    - `access_token`: New JWT token with extended expiration
+    - `token_type`: Always "bearer"
+    - `expires_in`: New expiration time in minutes (15)
+    
+    **Example Request**:
+    ```json
+    {
+        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+    }
+    ```
+    
+    **Example Response**:
+    ```json
+    {
+        "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+        "token_type": "bearer",
+        "expires_in": 15
+    }
+    ```
+    
+    **Errors**:
+    - `400 Bad Request`: Token is invalid, expired, or malformed
+    - `500 Internal Server Error`: Unexpected error during token refresh
     """
     try:
         result = refresh_token(request.token)

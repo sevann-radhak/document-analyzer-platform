@@ -19,7 +19,19 @@ router = APIRouter()
     "",
     response_model=EventListResponse,
     status_code=status.HTTP_200_OK,
-    dependencies=[Depends(require_roles([UserRoles.USER, UserRoles.ADMIN, UserRoles.MODERATOR]))]
+    dependencies=[Depends(require_roles([UserRoles.USER, UserRoles.ADMIN, UserRoles.MODERATOR]))],
+    summary="Get Event Log",
+    description="""
+    Retrieve event log with optional filters and pagination.
+    
+    Returns a paginated list of events ordered by creation date (most recent first).
+    Supports filtering by event type, description, date range, and user ID.
+    
+    **Authentication Required**: Yes (Bearer token)
+    **Required Role**: user, admin, or moderator
+    """,
+    response_description="Paginated list of events",
+    tags=["events"]
 )
 async def get_events_endpoint(
     event_type: Optional[str] = Query(
@@ -59,15 +71,48 @@ async def get_events_endpoint(
     """
     Get event log with optional filters.
     
-    Supports filtering by:
-    - Event type (Document upload, AI, User interaction)
-    - Description (partial match, case-insensitive)
-    - Date range (start_date and end_date)
-    - User ID
+    **Query Parameters**:
+    - `event_type`: Filter by event type (Document upload, AI, User interaction)
+    - `description`: Filter by description (partial match, case-insensitive)
+    - `start_date`: Filter events from this date (ISO format, inclusive)
+    - `end_date`: Filter events until this date (ISO format, inclusive)
+    - `user_id`: Filter by user ID
+    - `skip`: Number of records to skip (default: 0)
+    - `limit`: Maximum records to return (default: 100, max: 1000)
     
-    Results are paginated and ordered by creation date (most recent first).
+    **Response**:
+    - `events`: List of event objects
+    - `total`: Total number of events matching filters
+    - `skip`: Number of records skipped
+    - `limit`: Maximum records returned
     
-    Requires authentication with user, admin, or moderator role.
+    **Example Request**:
+    ```
+    GET /api/v1/events?event_type=Document%20upload&start_date=2024-12-01T00:00:00Z&limit=50
+    ```
+    
+    **Example Response**:
+    ```json
+    {
+        "events": [
+            {
+                "id": 1,
+                "event_type": "Document upload",
+                "description": "Document 'invoice.pdf' uploaded and classified as 'Invoice'. Document ID: 1",
+                "user_id": 1,
+                "created_at": "2024-12-06T10:30:00Z"
+            }
+        ],
+        "total": 1,
+        "skip": 0,
+        "limit": 50
+    }
+    ```
+    
+    **Errors**:
+    - `401 Unauthorized`: Missing or invalid authentication token
+    - `403 Forbidden`: Insufficient permissions
+    - `500 Internal Server Error`: Database errors
     """
     try:
         events = get_events(
@@ -123,7 +168,22 @@ async def get_events_endpoint(
 @router.get(
     "/export",
     status_code=status.HTTP_200_OK,
-    dependencies=[Depends(require_roles([UserRoles.USER, UserRoles.ADMIN, UserRoles.MODERATOR]))]
+    dependencies=[Depends(require_roles([UserRoles.USER, UserRoles.ADMIN, UserRoles.MODERATOR]))],
+    summary="Export Events to Excel",
+    description="""
+    Export event log to Excel format with optional filters.
+    
+    Generates an Excel file (.xlsx) containing all events matching the specified filters.
+    The file includes formatted headers and all event data.
+    
+    **Authentication Required**: Yes (Bearer token)
+    **Required Role**: user, admin, or moderator
+    
+    **Supported Filters**: Same as the events list endpoint
+    **Export Limit**: Up to 10,000 events per export
+    """,
+    response_description="Excel file (.xlsx) with event data",
+    tags=["events"]
 )
 async def export_events_endpoint(
     event_type: Optional[str] = Query(
@@ -152,16 +212,32 @@ async def export_events_endpoint(
     """
     Export event log to Excel format with optional filters.
     
-    Supports the same filtering options as the events list endpoint:
-    - Event type (Document upload, AI, User interaction)
-    - Description (partial match, case-insensitive)
-    - Date range (start_date and end_date)
-    - User ID
+    **Query Parameters** (same as events list endpoint):
+    - `event_type`: Filter by event type
+    - `description`: Filter by description (partial match)
+    - `start_date`: Filter events from this date (ISO format)
+    - `end_date`: Filter events until this date (ISO format)
+    - `user_id`: Filter by user ID
     
-    Returns an Excel file (.xlsx) with all matching events.
-    The file includes formatted headers and all event data.
+    **Response**:
+    - Content-Type: `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`
+    - File name: `events_export_YYYYMMDD_HHMMSS.xlsx`
+    - Excel file with columns: Event ID, Event Type, Description, User ID, Created At, Updated At
     
-    Requires authentication with user, admin, or moderator role.
+    **Example Request**:
+    ```
+    GET /api/v1/events/export?event_type=Document%20upload&start_date=2024-12-01T00:00:00Z
+    ```
+    
+    **Example Response**:
+    - Binary Excel file download
+    - Filename: `events_export_20241206_103000.xlsx`
+    
+    **Errors**:
+    - `401 Unauthorized`: Missing or invalid authentication token
+    - `403 Forbidden`: Insufficient permissions
+    - `404 Not Found`: No events found matching the filters
+    - `500 Internal Server Error`: Database or Excel generation errors
     """
     try:
         events = get_events(

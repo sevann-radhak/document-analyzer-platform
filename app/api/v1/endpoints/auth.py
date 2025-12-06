@@ -9,12 +9,56 @@ from app.core.constants import ErrorMessages
 router = APIRouter()
 
 
-@router.post("/login", response_model=LoginResponse, status_code=status.HTTP_200_OK)
+@router.post(
+    "/login",
+    response_model=LoginResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Anonymous Login",
+    description="""
+    Perform anonymous login without credentials.
+    
+    This endpoint:
+    - Creates a new anonymous user in the database
+    - Generates a JWT token with user ID and role
+    - Returns the token with 15-minute expiration
+    
+    No authentication required. Each call creates a new user.
+    """,
+    response_description="Login response with JWT token and user information",
+    tags=["authentication"]
+)
 async def login(
     request: LoginRequest,
     db: Session = Depends(get_db)
 ) -> LoginResponse:
-    """Anonymous login endpoint - creates a new user and returns JWT token."""
+    """
+    Anonymous login endpoint - creates a new user and returns JWT token.
+    
+    **Request Body**: Empty JSON object `{}`
+    
+    **Response**: 
+    - `id_usuario`: Newly created user ID
+    - `rol`: User role (default: "user")
+    - `access_token`: JWT token for authentication
+    - `token_type`: Always "bearer"
+    - `expires_in`: Token expiration time in minutes (15)
+    
+    **Example Request**:
+    ```json
+    {}
+    ```
+    
+    **Example Response**:
+    ```json
+    {
+        "id_usuario": 1,
+        "rol": "user",
+        "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+        "token_type": "bearer",
+        "expires_in": 15
+    }
+    ```
+    """
     try:
         result = login_anonymous(db)
         return LoginResponse(**result)
