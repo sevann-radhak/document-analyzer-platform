@@ -134,10 +134,10 @@ This document outlines the step-by-step implementation plan following Clean Arch
 - **Commit**: `feat(schemas): add token refresh schemas - Generated with Cursor` ✅
 
 ### Step 4.2: Token Service
-- [ ] Extend auth service with token renewal logic
-- [ ] Validate token expiration
-- [ ] Generate new token with extended expiration
-- **Commit**: `feat(services): add token renewal logic - Generated with Cursor`
+- [x] Extend auth service with token renewal logic
+- [x] Validate token expiration
+- [x] Generate new token with extended expiration
+- **Commit**: `feat(services): add token renewal logic - Generated with Cursor` ✅
 
 ### Step 4.3: Token Endpoint
 - [ ] Create token endpoint (`app/api/v1/endpoints/tokens.py`)

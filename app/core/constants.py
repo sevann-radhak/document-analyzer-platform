@@ -48,6 +48,9 @@ class ErrorMessages:
     # API Errors
     DATABASE_ERROR_LOGIN: Final[str] = "Database error during login"
     UNEXPECTED_ERROR_LOGIN: Final[str] = "Unexpected error during login"
+    TOKEN_EXPIRED: Final[str] = "Token has expired"
+    TOKEN_INVALID: Final[str] = "Invalid or malformed token"
+    TOKEN_REFRESH_ERROR: Final[str] = "Error refreshing token"
 
 
 class ValidationMessages:
