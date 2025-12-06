@@ -106,10 +106,10 @@ This document outlines the step-by-step implementation plan following Clean Arch
 - **Commit**: `feat(repositories): add file repository - Generated with Cursor` ✅
 
 ### Step 3.5: File Service
-- [ ] Create file service (`app/services/file_service.py`)
-- [ ] Implement upload logic: S3 upload + DB save + validation
-- [ ] Return validation results
-- **Commit**: `feat(services): implement file upload service - Generated with Cursor`
+- [x] Create file service (`app/services/file_service.py`)
+- [x] Implement upload logic: S3 upload + DB save + validation
+- [x] Return validation results
+- **Commit**: `feat(services): implement file upload service - Generated with Cursor` ✅
 
 ### Step 3.6: File Endpoint
 - [ ] Create file endpoint (`app/api/v1/endpoints/files.py`)
