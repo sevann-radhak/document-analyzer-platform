@@ -210,10 +210,10 @@ This document outlines the step-by-step implementation plan following Clean Arch
 - **Commit**: `feat(services): add event service for logging - Generated with Cursor` ✅
 
 ### Step 6.2: Event Repository
-- [ ] Create event repository (`app/repositories/event_repository.py`)
-- [ ] CRUD operations with filtering
-- [ ] Filter by type, description, date range
-- **Commit**: `feat(repositories): add event repository with filtering - Generated with Cursor`
+- [x] Create event repository (`app/repositories/event_repository.py`)
+- [x] CRUD operations with filtering
+- [x] Filter by type, description, date range
+- **Commit**: `feat(repositories): add event repository with filtering - Generated with Cursor` ✅
 
 ### Step 6.3: Event Schemas
 - [ ] Create event schemas (`app/schemas/event.py`)
