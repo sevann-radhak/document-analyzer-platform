@@ -1,5 +1,4 @@
 """Integration tests for authentication flow."""
-import pytest
 from fastapi import status
 from unittest.mock import patch
 from app.core.security import create_access_token
