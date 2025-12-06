@@ -70,3 +70,35 @@ class ValidationMessages:
     DUPLICATE_VALUE: Final[str] = "Duplicate {field} found"
     DUPLICATE_ID: Final[str] = "Duplicate ID found"
 
+
+class ExcelExportConfig:
+    """Configuration constants for Excel export functionality."""
+    
+    WORKSHEET_NAME: Final[str] = "Events"
+    
+    HEADER_EVENT_ID: Final[str] = "Event ID"
+    HEADER_EVENT_TYPE: Final[str] = "Event Type"
+    HEADER_DESCRIPTION: Final[str] = "Description"
+    HEADER_USER_ID: Final[str] = "User ID"
+    HEADER_CREATED_AT: Final[str] = "Created At"
+    HEADER_UPDATED_AT: Final[str] = "Updated At"
+    
+    HEADER_BACKGROUND_COLOR: Final[str] = "366092"
+    HEADER_TEXT_COLOR: Final[str] = "FFFFFF"
+    HEADER_FONT_SIZE: Final[int] = 11
+    
+    BORDER_STYLE: Final[str] = "thin"
+    
+    COLUMN_WIDTH_EVENT_ID: Final[int] = 12
+    COLUMN_WIDTH_EVENT_TYPE: Final[int] = 20
+    COLUMN_WIDTH_DESCRIPTION: Final[int] = 80
+    COLUMN_WIDTH_USER_ID: Final[int] = 12
+    COLUMN_WIDTH_CREATED_AT: Final[int] = 20
+    COLUMN_WIDTH_UPDATED_AT: Final[int] = 20
+    
+    DATE_FORMAT: Final[str] = "%Y-%m-%d %H:%M:%S"
+    
+    ALIGNMENT_HORIZONTAL_CENTER: Final[str] = "center"
+    ALIGNMENT_VERTICAL_CENTER: Final[str] = "center"
+    ALIGNMENT_VERTICAL_TOP: Final[str] = "top"
+

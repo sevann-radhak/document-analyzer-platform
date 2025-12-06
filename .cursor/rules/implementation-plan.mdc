@@ -227,9 +227,9 @@ This document outlines the step-by-step implementation plan following Clean Arch
 - **Commit**: `feat(api): add event history endpoint with filters - Generated with Cursor` ✅
 
 ### Step 6.5: Excel Export Utility
-- [ ] Create Excel export utility (`app/utils/excel_export.py`)
-- [ ] Export events to Excel format
-- **Commit**: `feat(utils): add Excel export functionality - Generated with Cursor`
+- [x] Create Excel export utility (`app/utils/excel_export.py`)
+- [x] Export events to Excel format
+- **Commit**: `feat(utils): add Excel export functionality - Generated with Cursor` ✅
 
 ### Step 6.6: Excel Export Endpoint
 - [ ] Add GET /api/v1/events/export endpoint
