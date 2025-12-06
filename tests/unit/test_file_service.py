@@ -3,10 +3,11 @@ import pytest
 from unittest.mock import Mock, patch, MagicMock
 from datetime import datetime, timezone
 from sqlalchemy.orm import Session
-from app.services.file_service import generate_s3_key, upload_csv_file
+from app.services.file_service import upload_csv_file
+from app.utils.file_utils import generate_s3_key
 from app.schemas.file import FileUploadResponse, ValidationResult, ValidationError
 from app.models.file import File
-from app.core.constants import ValidationErrorType
+from app.core.constants import ValidationErrorType, FileConstants
 from botocore.exceptions import ClientError, BotoCoreError
 from tests.unit.conftest import mock_db
 
@@ -96,7 +97,7 @@ class TestGenerateS3Key:
     def test_generate_s3_key_with_extension(self):
         """Test S3 key generation for file with extension."""
         filename = "test.csv"
-        key = generate_s3_key(filename)
+        key = generate_s3_key(filename, FileConstants.S3_PREFIX_UPLOADS)
         
         assert key.startswith("uploads/")
         assert filename.split(".")[0] in key
@@ -106,7 +107,7 @@ class TestGenerateS3Key:
     def test_generate_s3_key_without_extension(self):
         """Test S3 key generation for file without extension."""
         filename = "testfile"
-        key = generate_s3_key(filename)
+        key = generate_s3_key(filename, FileConstants.S3_PREFIX_UPLOADS)
         
         assert key.startswith("uploads/")
         assert filename in key
@@ -115,7 +116,7 @@ class TestGenerateS3Key:
     def test_generate_s3_key_includes_timestamp(self):
         """Test that S3 key includes timestamp."""
         filename = "test.csv"
-        key = generate_s3_key(filename)
+        key = generate_s3_key(filename, FileConstants.S3_PREFIX_UPLOADS)
         
         assert "uploads/" in key
         assert filename.split(".")[0] in key
@@ -127,7 +128,7 @@ class TestGenerateS3Key:
     def test_generate_s3_key_format(self):
         """Test that S3 key follows expected format."""
         filename = "data.csv"
-        key = generate_s3_key(filename)
+        key = generate_s3_key(filename, FileConstants.S3_PREFIX_UPLOADS)
         
         parts = key.split("/")
         assert len(parts) == 4
@@ -139,7 +140,7 @@ class TestGenerateS3Key:
     def test_generate_s3_key_with_complex_filename(self):
         """Test S3 key generation with complex filename."""
         filename = "my-test_file.2024.csv"
-        key = generate_s3_key(filename)
+        key = generate_s3_key(filename, FileConstants.S3_PREFIX_UPLOADS)
         
         assert "my-test_file" in key
         assert key.endswith(".csv")

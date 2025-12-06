@@ -1,39 +1,22 @@
 """File service for handling file uploads, validation, and storage."""
 import io
+import logging
 from typing import Dict, Any, Optional
-from datetime import datetime, timezone
 from sqlalchemy.orm import Session
 from app.repositories.file_repository import FileRepository
 from app.utils.aws_client import S3Client, get_s3_client
 from app.utils.validators import CSVValidator, validate_csv
+from app.utils.file_utils import (
+    resolve_s3_key_collision,
+    get_content_type
+)
 from app.schemas.file import FileUploadResponse, ValidationResult
 from app.models.file import File
+from app.core.constants import FileConstants
 from app.core.logging_config import get_logger
 from app.utils.logger import log_event
 
 logger = get_logger(__name__)
-
-
-def generate_s3_key(filename: str) -> str:
-    """
-    Generate a unique S3 key for a file.
-    
-    Args:
-        filename: Original filename
-    
-    Returns:
-        S3 key in format: uploads/YYYY/MM/filename_timestamp.ext
-    """
-    now = datetime.now(timezone.utc)
-    timestamp = int(now.timestamp())
-    
-    if "." in filename:
-        name, ext = filename.rsplit(".", 1)
-        safe_filename = f"{name}_{timestamp}.{ext}"
-    else:
-        safe_filename = f"{filename}_{timestamp}"
-    
-    return f"uploads/{now.year}/{now.month:02d}/{safe_filename}"
 
 
 def upload_csv_file(
@@ -77,19 +60,11 @@ def upload_csv_file(
     s3_client = get_s3_client()
     file_repo = FileRepository(db)
     
-    s3_key = generate_s3_key(filename)
-    
-    counter = 0
-    while file_repo.exists_by_s3_key(s3_key):
-        counter += 1
-        now = datetime.now(timezone.utc)
-        timestamp = int(now.timestamp())
-        if "." in filename:
-            name, ext = filename.rsplit(".", 1)
-            safe_filename = f"{name}_{timestamp}_{counter}.{ext}"
-        else:
-            safe_filename = f"{filename}_{timestamp}_{counter}"
-        s3_key = f"uploads/{now.year}/{now.month:02d}/{safe_filename}"
+    s3_key = resolve_s3_key_collision(
+        filename=filename,
+        prefix=FileConstants.S3_PREFIX_UPLOADS,
+        exists_checker=file_repo.exists_by_s3_key
+    )
     
     validation_result = validate_csv(
         file_content=file_content,
@@ -102,7 +77,7 @@ def upload_csv_file(
     s3_client.upload_file(
         file_obj=file_obj,
         s3_key=s3_key,
-        content_type="text/csv"
+        content_type=get_content_type(filename)
     )
     
     validation_results_dict = validation_result.model_dump()
@@ -114,7 +89,6 @@ def upload_csv_file(
         validation_results=validation_results_dict
     )
     
-    import logging
     log_event(
         logger=logger,
         level=logging.INFO,

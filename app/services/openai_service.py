@@ -10,6 +10,10 @@ from app.services.ai_service import (
     DocumentClassification,
     SentimentType
 )
+from app.utils.file_utils import (
+    get_content_type,
+    is_image_file
+)
 from app.core.config import settings
 from app.core.constants import ErrorMessages
 
@@ -31,38 +35,6 @@ class OpenAIService(AIServiceInterface):
         self.client = AsyncOpenAI(api_key=self.api_key)
         self.model = "gpt-4o"
 
-    def _get_mime_type(self, filename: str) -> str:
-        """
-        Get MIME type based on file extension.
-
-        Args:
-            filename: File name with extension
-
-        Returns:
-            MIME type string
-        """
-        extension = filename.lower().split('.')[-1]
-        mime_types = {
-            'pdf': 'application/pdf',
-            'jpg': 'image/jpeg',
-            'jpeg': 'image/jpeg',
-            'png': 'image/png'
-        }
-        return mime_types.get(extension, 'application/octet-stream')
-
-    def _is_image(self, filename: str) -> bool:
-        """
-        Check if file is an image.
-
-        Args:
-            filename: File name with extension
-
-        Returns:
-            True if image, False otherwise
-        """
-        extension = filename.lower().split('.')[-1]
-        return extension in ['jpg', 'jpeg', 'png']
-
     async def classify_document(
         self,
         file_content: bytes,
@@ -83,9 +55,9 @@ class OpenAIService(AIServiceInterface):
             Exception: For AI service-specific errors
         """
         try:
-            mime_type = self._get_mime_type(filename)
+            mime_type = get_content_type(filename)
             
-            if self._is_image(filename):
+            if is_image_file(filename):
                 base64_image = base64.b64encode(file_content).decode('utf-8')
                 image_url = f"data:{mime_type};base64,{base64_image}"
                 
@@ -159,9 +131,9 @@ class OpenAIService(AIServiceInterface):
             Exception: For AI service-specific errors
         """
         try:
-            mime_type = self._get_mime_type(filename)
+            mime_type = get_content_type(filename)
             
-            if not self._is_image(filename):
+            if not is_image_file(filename):
                 raise ValueError(
                     ErrorMessages.AI_UNSUPPORTED_FILE_TYPE.format(file_type=filename.split('.')[-1])
                 )
@@ -261,9 +233,9 @@ If any field is not found, use null or empty string. Return only valid JSON, no 
             Exception: For AI service-specific errors
         """
         try:
-            mime_type = self._get_mime_type(filename)
+            mime_type = get_content_type(filename)
             
-            if not self._is_image(filename):
+            if not is_image_file(filename):
                 raise ValueError(
                     ErrorMessages.AI_UNSUPPORTED_FILE_TYPE.format(file_type=filename.split('.')[-1])
                 )

@@ -102,3 +102,23 @@ class ExcelExportConfig:
     ALIGNMENT_VERTICAL_CENTER: Final[str] = "center"
     ALIGNMENT_VERTICAL_TOP: Final[str] = "top"
 
+
+class FileConstants:
+    """File type and MIME type constants."""
+    
+    S3_PREFIX_UPLOADS: Final[str] = "uploads"
+    S3_PREFIX_DOCUMENTS: Final[str] = "documents"
+    
+    FILE_TYPE_PDF: Final[str] = "PDF"
+    FILE_TYPE_JPG: Final[str] = "JPG"
+    FILE_TYPE_PNG: Final[str] = "PNG"
+    FILE_TYPE_CSV: Final[str] = "CSV"
+    
+    MIME_TYPE_PDF: Final[str] = "application/pdf"
+    MIME_TYPE_JPEG: Final[str] = "image/jpeg"
+    MIME_TYPE_PNG: Final[str] = "image/png"
+    MIME_TYPE_CSV: Final[str] = "text/csv"
+    MIME_TYPE_OCTET_STREAM: Final[str] = "application/octet-stream"
+    
+    SUPPORTED_DOCUMENT_EXTENSIONS: Final[list] = ["pdf", "jpg", "jpeg", "png"]
+    SUPPORTED_IMAGE_EXTENSIONS: Final[list] = ["jpg", "jpeg", "png"]

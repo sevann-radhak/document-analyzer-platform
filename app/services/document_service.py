@@ -1,84 +1,27 @@
 """Document service for handling document uploads, AI analysis, and storage."""
 import io
-import os
+import logging
 from typing import Dict, Any, Optional
-from datetime import datetime, timezone
 from sqlalchemy.orm import Session
 from botocore.exceptions import ClientError, BotoCoreError
 
 from app.repositories.document_repository import DocumentRepository
 from app.utils.aws_client import S3Client, get_s3_client
+from app.utils.file_utils import (
+    get_file_type,
+    get_content_type,
+    is_document_file,
+    resolve_s3_key_collision
+)
 from app.services.ai_service import AIServiceInterface, DocumentClassification
 from app.services.openai_service import OpenAIService
 from app.services.event_service import log_document_upload, log_ai_classification
 from app.schemas.document import DocumentResponse, InvoiceData, InformationData
-from app.core.constants import ErrorMessages
+from app.core.constants import ErrorMessages, FileConstants
 from app.core.logging_config import get_logger
 from app.utils.logger import log_event
 
 logger = get_logger(__name__)
-
-
-def generate_document_s3_key(filename: str) -> str:
-    """
-    Generate a unique S3 key for a document.
-    
-    Args:
-        filename: Original filename
-    
-    Returns:
-        S3 key in format: documents/YYYY/MM/filename_timestamp.ext
-    """
-    now = datetime.now(timezone.utc)
-    timestamp = int(now.timestamp())
-    
-    if "." in filename:
-        name, ext = filename.rsplit(".", 1)
-        safe_filename = f"{name}_{timestamp}.{ext}"
-    else:
-        safe_filename = f"{filename}_{timestamp}"
-    
-    return f"documents/{now.year}/{now.month:02d}/{safe_filename}"
-
-
-def get_file_type(filename: str) -> str:
-    """
-    Get file type from filename extension.
-    
-    Args:
-        filename: File name with extension
-    
-    Returns:
-        File type (PDF, JPG, PNG) in uppercase
-    """
-    extension = filename.lower().split('.')[-1]
-    file_types = {
-        'pdf': 'PDF',
-        'jpg': 'JPG',
-        'jpeg': 'JPG',
-        'png': 'PNG'
-    }
-    return file_types.get(extension, extension.upper())
-
-
-def get_content_type(filename: str) -> str:
-    """
-    Get content type for file upload.
-    
-    Args:
-        filename: File name with extension
-    
-    Returns:
-        MIME content type
-    """
-    extension = filename.lower().split('.')[-1]
-    content_types = {
-        'pdf': 'application/pdf',
-        'jpg': 'image/jpeg',
-        'jpeg': 'image/jpeg',
-        'png': 'image/png'
-    }
-    return content_types.get(extension, 'application/octet-stream')
 
 
 async def upload_and_analyze_document(
@@ -111,12 +54,13 @@ async def upload_and_analyze_document(
         ValueError: If file type is invalid or AI processing fails
         Exception: If S3 upload or database save fails
     """
-    file_type = get_file_type(filename)
-    
-    if file_type not in ['PDF', 'JPG', 'PNG']:
+    if not is_document_file(filename):
+        file_type = get_file_type(filename)
         raise ValueError(
             ErrorMessages.AI_UNSUPPORTED_FILE_TYPE.format(file_type=file_type)
         )
+    
+    file_type = get_file_type(filename)
     
     if ai_service is None:
         ai_service = OpenAIService()
@@ -124,19 +68,11 @@ async def upload_and_analyze_document(
     s3_client = get_s3_client()
     document_repo = DocumentRepository(db)
     
-    s3_key = generate_document_s3_key(filename)
-    
-    counter = 0
-    while document_repo.exists_by_s3_key(s3_key):
-        counter += 1
-        now = datetime.now(timezone.utc)
-        timestamp = int(now.timestamp())
-        if "." in filename:
-            name, ext = filename.rsplit(".", 1)
-            safe_filename = f"{name}_{timestamp}_{counter}.{ext}"
-        else:
-            safe_filename = f"{filename}_{timestamp}_{counter}"
-        s3_key = f"documents/{now.year}/{now.month:02d}/{safe_filename}"
+    s3_key = resolve_s3_key_collision(
+        filename=filename,
+        prefix=FileConstants.S3_PREFIX_DOCUMENTS,
+        exists_checker=document_repo.exists_by_s3_key
+    )
     
     file_obj = io.BytesIO(file_content)
     content_type = get_content_type(filename)
@@ -172,8 +108,11 @@ async def upload_and_analyze_document(
             classification=classification.value,
             user_id=user_id
         )
-    except Exception:
-        pass
+    except Exception as e:
+        logger.warning(
+            f"Failed to log AI classification event: {str(e)}",
+            extra={"document_filename": filename, "classification": classification.value}
+        )
     
     if classification == DocumentClassification.INVOICE:
         extracted_data = InvoiceData(**extracted_data_raw)
@@ -188,7 +127,6 @@ async def upload_and_analyze_document(
         extracted_data=extracted_data_raw
     )
     
-    import logging
     log_event(
         logger=logger,
         level=logging.INFO,
@@ -211,8 +149,15 @@ async def upload_and_analyze_document(
             document_id=document_record.id,
             user_id=user_id
         )
-    except Exception:
-        pass
+    except Exception as e:
+        logger.warning(
+            f"Failed to log document upload event: {str(e)}",
+            extra={
+                "document_filename": filename,
+                "document_id": document_record.id,
+                "classification": classification.value
+            }
+        )
     
     return DocumentResponse(
         document_id=document_record.id,

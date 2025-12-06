@@ -5,16 +5,16 @@ from datetime import datetime, timezone
 from sqlalchemy.orm import Session
 from botocore.exceptions import ClientError, BotoCoreError
 
-from app.services.document_service import (
-    generate_document_s3_key,
+from app.services.document_service import upload_and_analyze_document
+from app.utils.file_utils import (
+    generate_s3_key,
     get_file_type,
-    get_content_type,
-    upload_and_analyze_document
+    get_content_type
 )
 from app.services.ai_service import DocumentClassification
 from app.schemas.document import DocumentResponse, InvoiceData, InformationData
 from app.models.document import Document
-from app.core.constants import ErrorMessages
+from app.core.constants import ErrorMessages, FileConstants
 from tests.unit.conftest import mock_db
 
 
@@ -91,12 +91,12 @@ def mock_document_repository(sample_document_record):
 
 
 class TestGenerateDocumentS3Key:
-    """Test cases for generate_document_s3_key function."""
+    """Test cases for generate_s3_key function for documents."""
 
     def test_generate_document_s3_key_with_extension(self):
         """Test that S3 key is generated correctly with file extension."""
         filename = "test.pdf"
-        s3_key = generate_document_s3_key(filename)
+        s3_key = generate_s3_key(filename, FileConstants.S3_PREFIX_DOCUMENTS)
         
         assert s3_key.startswith("documents/")
         assert "test" in s3_key
@@ -106,7 +106,7 @@ class TestGenerateDocumentS3Key:
     def test_generate_document_s3_key_without_extension(self):
         """Test that S3 key is generated correctly without file extension."""
         filename = "testfile"
-        s3_key = generate_document_s3_key(filename)
+        s3_key = generate_s3_key(filename, FileConstants.S3_PREFIX_DOCUMENTS)
         
         assert s3_key.startswith("documents/")
         assert "testfile" in s3_key
@@ -114,7 +114,7 @@ class TestGenerateDocumentS3Key:
     def test_generate_document_s3_key_includes_timestamp(self):
         """Test that S3 key includes timestamp."""
         filename = "test.pdf"
-        s3_key = generate_document_s3_key(filename)
+        s3_key = generate_s3_key(filename, FileConstants.S3_PREFIX_DOCUMENTS)
         
         parts = s3_key.split("_")
         assert len(parts) >= 2
@@ -122,7 +122,7 @@ class TestGenerateDocumentS3Key:
     def test_generate_document_s3_key_format(self):
         """Test that S3 key follows correct format."""
         filename = "invoice.pdf"
-        s3_key = generate_document_s3_key(filename)
+        s3_key = generate_s3_key(filename, FileConstants.S3_PREFIX_DOCUMENTS)
         
         assert s3_key.startswith("documents/")
         assert "/" in s3_key[10:]
@@ -131,7 +131,7 @@ class TestGenerateDocumentS3Key:
     def test_generate_document_s3_key_with_complex_filename(self):
         """Test that S3 key handles complex filenames correctly."""
         filename = "my-document_file-name (1).pdf"
-        s3_key = generate_document_s3_key(filename)
+        s3_key = generate_s3_key(filename, FileConstants.S3_PREFIX_DOCUMENTS)
         
         assert s3_key.startswith("documents/")
         assert s3_key.endswith(".pdf")
@@ -142,20 +142,20 @@ class TestGetFileType:
 
     def test_get_file_type_pdf(self):
         """Test that PDF files return 'PDF'."""
-        assert get_file_type("test.pdf") == "PDF"
-        assert get_file_type("document.PDF") == "PDF"
+        assert get_file_type("test.pdf") == FileConstants.FILE_TYPE_PDF
+        assert get_file_type("document.PDF") == FileConstants.FILE_TYPE_PDF
 
     def test_get_file_type_jpg(self):
         """Test that JPG files return 'JPG'."""
-        assert get_file_type("test.jpg") == "JPG"
-        assert get_file_type("image.JPG") == "JPG"
-        assert get_file_type("photo.jpeg") == "JPG"
-        assert get_file_type("picture.JPEG") == "JPG"
+        assert get_file_type("test.jpg") == FileConstants.FILE_TYPE_JPG
+        assert get_file_type("image.JPG") == FileConstants.FILE_TYPE_JPG
+        assert get_file_type("photo.jpeg") == FileConstants.FILE_TYPE_JPG
+        assert get_file_type("picture.JPEG") == FileConstants.FILE_TYPE_JPG
 
     def test_get_file_type_png(self):
         """Test that PNG files return 'PNG'."""
-        assert get_file_type("test.png") == "PNG"
-        assert get_file_type("image.PNG") == "PNG"
+        assert get_file_type("test.png") == FileConstants.FILE_TYPE_PNG
+        assert get_file_type("image.PNG") == FileConstants.FILE_TYPE_PNG
 
     def test_get_file_type_unknown_extension(self):
         """Test that unknown extensions return uppercase extension."""
@@ -168,20 +168,20 @@ class TestGetContentType:
 
     def test_get_content_type_pdf(self):
         """Test that PDF files return correct content type."""
-        assert get_content_type("test.pdf") == "application/pdf"
+        assert get_content_type("test.pdf") == FileConstants.MIME_TYPE_PDF
 
     def test_get_content_type_jpg(self):
         """Test that JPG files return correct content type."""
-        assert get_content_type("test.jpg") == "image/jpeg"
-        assert get_content_type("image.jpeg") == "image/jpeg"
+        assert get_content_type("test.jpg") == FileConstants.MIME_TYPE_JPEG
+        assert get_content_type("image.jpeg") == FileConstants.MIME_TYPE_JPEG
 
     def test_get_content_type_png(self):
         """Test that PNG files return correct content type."""
-        assert get_content_type("test.png") == "image/png"
+        assert get_content_type("test.png") == FileConstants.MIME_TYPE_PNG
 
     def test_get_content_type_unknown(self):
         """Test that unknown extensions return default content type."""
-        assert get_content_type("test.txt") == "application/octet-stream"
+        assert get_content_type("test.txt") == FileConstants.MIME_TYPE_OCTET_STREAM
 
 
 class TestUploadAndAnalyzeDocument:
