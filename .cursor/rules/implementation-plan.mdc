@@ -96,9 +96,9 @@ This document outlines the step-by-step implementation plan following Clean Arch
 - **Commit**: `feat(schemas): add file upload schemas - Generated with Cursor` ✅
 
 ### Step 3.3: CSV Validator
-- [ ] Create CSV validator utility (`app/utils/validators.py`)
-- [ ] Validate empty values, incorrect types, duplicates
-- **Commit**: `feat(utils): add CSV validation logic - Generated with Cursor`
+- [x] Create CSV validator utility (`app/utils/validators.py`)
+- [x] Validate empty values, incorrect types, duplicates
+- **Commit**: `feat(utils): add CSV validation logic - Generated with Cursor` ✅
 
 ### Step 3.4: File Repository
 - [ ] Create file repository (`app/repositories/file_repository.py`)
