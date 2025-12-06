@@ -85,10 +85,10 @@ This document outlines the step-by-step implementation plan following Clean Arch
 **Goal**: CSV upload with S3 storage and validation
 
 ### Step 3.1: AWS S3 Client
-- [ ] Create AWS S3 client utility (`app/utils/aws_client.py`)
-- [ ] Implement upload, download, delete methods
-- [ ] Add error handling
-- **Commit**: `feat(utils): add AWS S3 client wrapper - Generated with Cursor`
+- [x] Create AWS S3 client utility (`app/utils/aws_client.py`)
+- [x] Implement upload, download, delete methods
+- [x] Add error handling
+- **Commit**: `feat(utils): add AWS S3 client wrapper - Generated with Cursor` ✅
 
 ### Step 3.2: File Schemas
 - [ ] Create file upload schemas (`app/schemas/file.py`)
