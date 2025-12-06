@@ -176,10 +176,10 @@ This document outlines the step-by-step implementation plan following Clean Arch
 - **Commit**: `feat(repositories): add document repository - Generated with Cursor` ✅
 
 ### Step 5.5: Document Service
-- [ ] Create document service (`app/services/document_service.py`)
-- [ ] Implement upload, classification, extraction logic
-- [ ] Handle Invoice vs Information differently
-- **Commit**: `feat(services): implement document analysis service - Generated with Cursor`
+- [x] Create document service (`app/services/document_service.py`)
+- [x] Implement upload, classification, extraction logic
+- [x] Handle Invoice vs Information differently
+- **Commit**: `feat(services): implement document analysis service - Generated with Cursor` ✅
 
 ### Step 5.6: Document Endpoint
 - [ ] Create document endpoint (`app/api/v1/endpoints/documents.py`)
