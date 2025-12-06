@@ -237,9 +237,9 @@ This document outlines the step-by-step implementation plan following Clean Arch
 - **Commit**: `feat(api): add Excel export endpoint for events - Generated with Cursor` ✅
 
 ### Step 6.7: Unit Tests - Event Service
-- [ ] Create unit tests for event service (10+ test cases)
-- [ ] Test filtering, export functionality
-- **Commit**: `test(events): add unit tests for event service - Generated with Cursor`
+- [x] Create unit tests for event service (10+ test cases)
+- [x] Test filtering, export functionality
+- **Commit**: `test(events): add unit tests for event service - Generated with Cursor` ✅
 
 ---
 
