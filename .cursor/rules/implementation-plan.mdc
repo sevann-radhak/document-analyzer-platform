@@ -146,8 +146,8 @@ This document outlines the step-by-step implementation plan following Clean Arch
 - **Commit**: `feat(api): add token renewal endpoint - Generated with Cursor` ✅
 
 ### Step 4.4: Unit Tests - Token Renewal
-- [ ] Create unit tests for token renewal (10+ test cases)
-- **Commit**: `test(auth): add unit tests for token renewal - Generated with Cursor`
+- [x] Create unit tests for token renewal (10+ test cases)
+- **Commit**: `test(auth): add unit tests for token renewal - Generated with Cursor` ✅
 
 ---
 
