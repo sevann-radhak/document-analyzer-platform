@@ -27,3 +27,4 @@ async def root() -> dict[str, str]:
 async def health_check() -> dict[str, str]:
     return {"status": "healthy"}
 
+

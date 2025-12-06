@@ -7,3 +7,4 @@ from app.main import app
 def client() -> TestClient:
     return TestClient(app)
 
+
